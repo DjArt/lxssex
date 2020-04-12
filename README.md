@@ -1,2 +1,1 @@
-# lxssex
-LinuX SubSystem Extension
+# lxssex - WSL1 research project
