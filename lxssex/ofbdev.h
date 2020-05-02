@@ -9,17 +9,6 @@
 #define SYMBOLIC_NAME_STRING      L"\\DosDevices\\lxssex"
 #define TAG (ULONG)'TEVE'
 
-#if DBG
-#define DebugPrint(_x_) \
-                DbgPrint("EVENT.SYS: ");\
-                DbgPrint _x_;
-
-#else
-
-#define DebugPrint(_x_)
-
-#endif
-
 //
 // DATA
 //

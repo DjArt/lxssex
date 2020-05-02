@@ -24,7 +24,7 @@ NTSTATUS OfbEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)
     );
 
     if (!NT_SUCCESS(status)) {
-        DebugPrint(("\tIoCreateDevice returned 0x%x\n", status));
+        DbgPrint("\tIoCreateDevice returned 0x%x\n", status);
         return(status);
     }
 
@@ -36,7 +36,7 @@ NTSTATUS OfbEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)
 
     if (!NT_SUCCESS(status)) {
         IoDeleteDevice(deviceObject);
-        DebugPrint(("\tIoCreateSymbolicLink returned 0x%x\n", status));
+        DbgPrint("\tIoCreateSymbolicLink returned 0x%x\n", status);
         return(status);
     }
 
@@ -66,7 +66,7 @@ VOID OfbUnload(PDRIVER_OBJECT DriverObject)
     PDEVICE_EXTENSION    deviceExtension = (PDEVICE_EXTENSION)deviceObject->DeviceExtension;
     UNICODE_STRING      symbolicLinkName;
 
-    DebugPrint(("==>Unload\n"));
+    DbgPrint("==>Unload\n");
 
     PAGED_CODE();
 
@@ -102,7 +102,7 @@ NTSTATUS OfbCreateClose(PDEVICE_OBJECT DeviceObject, PIRP Irp)
     switch (irpStack->MajorFunction)
     {
     case IRP_MJ_CREATE:
-        DebugPrint(("IRP_MJ_CREATE\n"));
+        DbgPrint("IRP_MJ_CREATE\n");
 
         fileContext = (PFILE_CONTEXT)ExAllocatePoolWithQuotaTag(NonPagedPool, sizeof(FILE_CONTEXT), TAG);
 
@@ -127,7 +127,7 @@ NTSTATUS OfbCreateClose(PDEVICE_OBJECT DeviceObject, PIRP Irp)
         break;
 
     case IRP_MJ_CLOSE:
-        DebugPrint(("IRP_MJ_CLOSE\n"));
+        DbgPrint(("IRP_MJ_CLOSE\n"));
 
         fileContext = (PFILE_CONTEXT)irpStack->FileObject->FsContext;
 
@@ -161,7 +161,7 @@ NTSTATUS OfbCleanup(PDEVICE_OBJECT DeviceObject, PIRP Irp)
     LIST_ENTRY          cleanupList;
     PFILE_CONTEXT       fileContext;
 
-    DebugPrint(("==>EventCleanup\n"));
+    DbgPrint("==>EventCleanup\n");
 
     deviceExtension = (PDEVICE_EXTENSION)DeviceObject->DeviceExtension;
     irpStack = IoGetCurrentIrpStackLocation(Irp);
@@ -216,7 +216,7 @@ NTSTATUS OfbCleanup(PDEVICE_OBJECT DeviceObject, PIRP Irp)
             //
             if (KeCancelTimer(&notifyRecord->Timer)) {
 
-                DebugPrint(("\tCanceled timer\n"));
+                DbgPrint(("\tCanceled timer\n"));
                 RemoveEntryList(thisEntry);
 
                     //
@@ -269,7 +269,7 @@ NTSTATUS OfbCleanup(PDEVICE_OBJECT DeviceObject, PIRP Irp)
         thisEntry = RemoveHeadList(&cleanupList);
         pendingIrp = CONTAINING_RECORD(thisEntry, IRP, Tail.Overlay.ListEntry);
 
-        DebugPrint(("\t canceled IRP %p\n", pendingIrp));
+        DbgPrint("\t canceled IRP %p\n", pendingIrp);
 
         pendingIrp->Tail.Overlay.DriverContext[3] = NULL;
         pendingIrp->IoStatus.Information = 0;
@@ -285,7 +285,7 @@ NTSTATUS OfbCleanup(PDEVICE_OBJECT DeviceObject, PIRP Irp)
     Irp->IoStatus.Information = 0;
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
 
-    DebugPrint(("<== EventCleanup\n"));
+    DbgPrint(("<== EventCleanup\n"));
     return status;
 
 }
@@ -299,7 +299,7 @@ NTSTATUS OfbDispatchIoControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
     NTSTATUS    status;
     PFILE_CONTEXT fileContext;
 
-    DebugPrint(("==> EventDispatchIoControl\n"));
+    DbgPrint("==> EventDispatchIoControl\n");
 
     irpStack = IoGetCurrentIrpStackLocation(Irp);
 
@@ -322,7 +322,7 @@ NTSTATUS OfbDispatchIoControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
     {
     case IOCTL_REGISTER_EVENT:
 
-        DebugPrint(("\tIOCTL_REGISTER_EVENT\n"));
+        DbgPrint(("\tIOCTL_REGISTER_EVENT\n"));
 
         //
         // First validate the parameters.
@@ -360,7 +360,7 @@ NTSTATUS OfbDispatchIoControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
     //
     IoReleaseRemoveLock(&fileContext->FileRundownLock, Irp);
 
-    DebugPrint(("<== EventDispatchIoControl\n"));
+    DbgPrint(("<== EventDispatchIoControl\n"));
     return status;
 }
 
@@ -371,7 +371,7 @@ VOID OfbCancelRoutine(PDEVICE_OBJECT DeviceObject, PIRP Irp)
     KIRQL               oldIrql;
     PNOTIFY_RECORD      notifyRecord;
 
-    DebugPrint(("==>EventCancelRoutine irp %p\n", Irp));
+    DbgPrint("==>EventCancelRoutine irp %p\n", Irp);
 
     deviceExtension = (PDEVICE_EXTENSION)DeviceObject->DeviceExtension;
 
@@ -398,7 +398,7 @@ VOID OfbCancelRoutine(PDEVICE_OBJECT DeviceObject, PIRP Irp)
     notifyRecord->PendingIrp = NULL;
 
     if (KeCancelTimer(&notifyRecord->Timer)) {
-        DebugPrint(("\t canceled timer\n"));
+        DbgPrint(("\t canceled timer\n"));
         ExFreePoolWithTag(notifyRecord, TAG);
         notifyRecord = NULL;
     }
@@ -429,13 +429,13 @@ VOID OfbCancelRoutine(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 
     KeReleaseSpinLock(&deviceExtension->QueueLock, oldIrql);
 
-    DebugPrint(("\t canceled IRP %p\n", Irp));
+    DbgPrint("\t canceled IRP %p\n", Irp);
     Irp->Tail.Overlay.DriverContext[3] = NULL;
     Irp->IoStatus.Status = STATUS_CANCELLED;
     Irp->IoStatus.Information = 0;
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
 
-    DebugPrint(("<==EventCancelRoutine irp %p\n", Irp));
+    DbgPrint("<==EventCancelRoutine irp %p\n", Irp);
     return;
 
 }
@@ -451,7 +451,7 @@ VOID CustomTimerDPC(PKDPC Dpc, PVOID DeferredContext, PVOID SystemArgument1, PVO
     UNREFERENCED_PARAMETER(SystemArgument1);
     UNREFERENCED_PARAMETER(SystemArgument2);
 
-    DebugPrint(("==> CustomTimerDPC \n"));
+    DbgPrint("==> CustomTimerDPC \n");
 
     ASSERT(notifyRecord != NULL); // can't be NULL
     _Analysis_assume_(notifyRecord != NULL);
@@ -508,7 +508,7 @@ VOID CustomTimerDPC(PKDPC Dpc, PVOID DeferredContext, PVOID SystemArgument1, PVO
         notifyRecord = NULL;
     }
 
-    DebugPrint(("<== CustomTimerDPC\n"));
+    DbgPrint(("<== CustomTimerDPC\n"));
 
     return;
 }
@@ -522,7 +522,7 @@ NTSTATUS RegisterIrpBasedNotification(PDEVICE_OBJECT DeviceObject, PIRP Irp)
     KIRQL   oldIrql;
     PREGISTER_EVENT registerEvent;
 
-    DebugPrint(("\tRegisterIrpBasedNotification\n"));
+    DbgPrint("\tRegisterIrpBasedNotification\n");
 
     irpStack = IoGetCurrentIrpStackLocation(Irp);
     deviceExtension = (PDEVICE_EXTENSION)DeviceObject->DeviceExtension;
