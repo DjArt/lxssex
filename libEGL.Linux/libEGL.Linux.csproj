@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>x64;arm64</Platforms>
     <RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
     <RootNamespace>EGL</RootNamespace>
     <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
@@ -17,7 +18,11 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT'">
-      <Exec Command="ubuntu run bash build.sh" />
+      <Exec Command="ubuntu run bash build.sh linux-$(Platform) $(Configuration)" />
+  </Target>
+  
+  <Target Name="PostClean" AfterTargets="Clean" Condition="'$(OS)' == 'Windows_NT'">
+      <Exec Command="ubuntu run bash clean.sh linux-$(Platform) $(Configuration)" />
   </Target>
 
 </Project>
