@@ -1,0 +1,6 @@
+﻿<Project>
+ <PropertyGroup>
+   <OutputPath>bin/$(Configuration)</OutputPath>
+   <IntermediateOutputPath Condition="'$(OS)' != 'Windows_NT'">obj/corert</IntermediateOutputPath>
+ </PropertyGroup>
+</Project>
