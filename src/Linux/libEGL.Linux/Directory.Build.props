@@ -1,0 +1,7 @@
+﻿<Project>
+ <PropertyGroup>
+   <OutputPath>bin/$(Configuration)</OutputPath>
+   <IntermediateOutputPath Condition="'$(OS)' != 'Windows_NT'">obj/corert</IntermediateOutputPath>
+   <MSBuildProjectExtensionsPath Condition="'$(OS)' != 'Windows_NT'">obj/corert</MSBuildProjectExtensionsPath>
+ </PropertyGroup>
+</Project>
