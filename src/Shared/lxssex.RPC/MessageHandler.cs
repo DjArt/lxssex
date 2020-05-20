@@ -13,8 +13,14 @@ namespace lxssex.RPC
 {
     public class MessageHandler
     {
-        private static readonly MethodInfo[] PRIMITIVE_WRITE_METHODS = typeof(MemoryMappedViewAccessor).GetTypeInfo().DeclaredMethods.Where(x => x.IsPublic && !x.IsStatic && !x.ContainsGenericParameters && x.Name == "Write").ToArray();
-        private static readonly MethodInfo GENERIC_WRITE_METHOD = typeof(MemoryMappedViewAccessor).GetTypeInfo().DeclaredMethods.First(x => x.IsPublic && !x.IsStatic && x.ContainsGenericParameters && x.Name == "Write");
+        private static readonly MethodInfo[] PRIMITIVE_WRITE_METHODS;
+        private static readonly MethodInfo GENERIC_WRITE_METHOD;
+
+        static MessageHandler()
+        {
+            PRIMITIVE_WRITE_METHODS = typeof(UnmanagedMemoryAccessor).GetTypeInfo().DeclaredMethods.Where(x => x.IsPublic && !x.IsStatic && !x.ContainsGenericParameters && x.Name == "Write").ToArray();
+            GENERIC_WRITE_METHOD = typeof(UnmanagedMemoryAccessor).GetTypeInfo().DeclaredMethods.First(x => x.IsPublic && !x.IsStatic && x.ContainsGenericParameters && x.Name == "Write");
+        }
 
         private static MethodInfo GetWriter(Type dataType)
         {
@@ -22,10 +28,10 @@ namespace lxssex.RPC
         }
 
         public TypeInfo ServicingType { get; }
-        public MemoryMappedFile SharedMemory { get; }
+        public SafeBuffer SharedMemory { get; }
         public WaitHandle SyncEvent { get; }
 
-        public MessageHandler(Type servicingType, MemoryMappedFile sharedMemory, WaitHandle syncEvent)
+        public MessageHandler(Type servicingType, SafeBuffer sharedMemory, WaitHandle syncEvent)
         {
             ServicingType = servicingType.GetTypeInfo();
             SharedMemory = sharedMemory;
@@ -40,19 +46,22 @@ namespace lxssex.RPC
 
         private void WriteData(string callerName, ParameterInfo[] @params, object[] values, ParameterInfo returnParam, object @return = null)
         {
-            byte[] encodedName = Encoding.UTF8.GetBytes(callerName);
-            using (MemoryMappedViewAccessor accessor = SharedMemory.CreateViewAccessor())
+            using (UnmanagedMemoryAccessor accessor = new UnmanagedMemoryAccessor(SharedMemory, 0, (long)SharedMemory.ByteLength, FileAccess.ReadWrite))
             {
                 long pos = sizeof(long);
+                byte[] encodedName = Encoding.UTF8.GetBytes(callerName);
                 accessor.Write(pos, encodedName.Length);
                 pos += sizeof(int);
                 accessor.WriteArray(pos, encodedName, 0, encodedName.Length);
                 pos += encodedName.Length;
-                ParameterInfo param = null;
-                object value = null;
-                for (int i0 = 0; i0 < @params.Length; i0++, param = @params[i0], value = values[i0])
+
+                void Serialize(ParameterInfo param, object value)
                 {
-                    if (param.ParameterType.IsArray)
+                    if (param == null)
+                    {
+                        //skip
+                    }
+                    else if (param.ParameterType.IsArray)
                     {
                         MethodInfo writeMethod = GetWriter(param.ParameterType.GetElementType());
                         Array array = (Array)value;
@@ -69,13 +78,30 @@ namespace lxssex.RPC
                     {
 
                     }
+                    else if (param.ParameterType == typeof(IntPtr))
+                    {
+                        accessor.Write(pos, ((IntPtr)value).ToInt64());
+                        pos += sizeof(long);
+                    }
+                    else if (param.ParameterType == typeof(UIntPtr))
+                    {
+                        accessor.Write(pos, ((UIntPtr)value).ToUInt64());
+                        pos += sizeof(ulong);
+                    }
                     else
                     {
-                        MethodInfo writeMethod = GetWriter(param.ParameterType);
+                        MethodInfo writeMethod = param.ParameterType.IsByRef ? GetWriter(param.ParameterType.GetElementType()) : GetWriter(param.ParameterType);
                         writeMethod.Invoke(accessor, new[] { pos, value });
                         pos += Marshal.SizeOf(value);
                     }
                 }
+                
+                for (int i0 = 0; i0 < @params.Length; i0++)
+                {
+                    Serialize(@params[i0], values[i0]);
+                }
+                Serialize(returnParam, @return);
+                accessor.Write(0, pos);
             }
         }
 
