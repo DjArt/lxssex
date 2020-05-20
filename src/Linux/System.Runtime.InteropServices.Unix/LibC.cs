@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,11 +21,16 @@ namespace System.Runtime.InteropServices.Unix
             }
         }
 
+        public static SafeMemoryMappedViewUnixHandle MMap(IntPtr addr, ulong length, MappingProtection protection, MappingFlags flags, SafeUnixHandle fileDescriptor, long offset)
+        {
+            SafeMemoryMappedViewUnixHandle result = Imports.MMap(addr, length, protection, flags, fileDescriptor?.DangerousGetHandle() ?? new IntPtr(-1), 0);
+            result.Initialize(length);
+            return result;
+        }
+
         public static SafeUnixHandle Open(string path, uint flags, int mode)
         {
-            SafeUnixHandle result = Imports.Open(path, flags, mode);
-            if (result.IsInvalid) throw new UnixIOException();
-            return result;
+            return Imports.Open(path, flags, mode);
         }
     }
 }
