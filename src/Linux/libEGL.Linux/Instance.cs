@@ -1,6 +1,8 @@
 ﻿using lxssex.RPC;
 using System;
+using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace EGL
 {
@@ -38,7 +40,7 @@ namespace EGL
 
         static Instance()
         {
-            RPC = new MessageHandler(typeof(Instance), null, null);
+            RPC = new MessageHandler(typeof(Instance), MemoryMappedFile.CreateOrOpen("test", ushort.MaxValue), new AutoResetEvent(false));
         }
 
         private static void EnsureEGLLoaded() { }
