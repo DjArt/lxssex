@@ -11,10 +11,10 @@ namespace System.Runtime.InteropServices.Unix
 
         public override bool IsInvalid => handle == INVALID;
 
-        //[ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         private SafeUnixHandle() : base(INVALID, true) { }
 
-        //[ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle() => Imports.Close(handle) != -1;
     }
 }
