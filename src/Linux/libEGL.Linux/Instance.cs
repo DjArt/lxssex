@@ -1,52 +1,52 @@
 ﻿using lxssex.RPC;
+using Microsoft.Win32.SafeHandles;
 using System;
+using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Unix;
 using System.Threading;
+
+using EGLDisplay = System.IntPtr;
+using EGLSurface = System.IntPtr;
+using EGLContext = System.IntPtr;
+using EGLNativePixmapType = System.IntPtr;
+using EGLNativeWindowType = System.IntPtr;
+using EGLNativeDisplayType = System.IntPtr;
+using EGLConfig = System.IntPtr;
+using EGLTime = System.IntPtr;
+using EGLSync = System.IntPtr;
+using EGLSyncKHR = System.IntPtr;
+using EGLClientBuffer = System.IntPtr;
+using EGLImage = System.IntPtr;
+using EGLImageKHR = System.IntPtr;
+using EGLDeviceEXT = System.IntPtr;
+using EGLObjectKHR = System.IntPtr;
+using EGLSetBlobFuncANDROID = System.IntPtr;
+using EGLGetBlobFuncANDROID = System.IntPtr;
+using AHardwareBuffer = System.IntPtr;
+using EGLFrameTokenANGLE = System.IntPtr;
+using EGLnsecsANDROID = System.IntPtr;
+using EGLLabelKHR = System.IntPtr;
+using EGLStreamKHR = System.IntPtr;
+using EGLDEBUGPROCKHR = System.IntPtr;
 
 namespace EGL
 {
-    public struct EGLDisplay { }
-    public struct EGLSurface { }
-    public struct EGLContext { }
-    public struct EGLNativePixmapType { }
-    public struct EGLNativeWindowType { }
-    public struct EGLNativeDisplayType { }
-    public struct EGLint { }
-    public struct EGLenum { }
-    public struct EGLConfig { }
-    public struct EGLTime { }
-    public struct EGLSync { }
-    public struct EGLSyncKHR { }
-    public struct EGLClientBuffer { }
-    public struct EGLAttrib { }
-    public struct EGLImage { }
-    public struct EGLImageKHR { }
-    public struct EGLDeviceEXT { }
-    public struct EGLObjectKHR { }
-    public struct EGLSetBlobFuncANDROID { }
-    public struct EGLGetBlobFuncANDROID { }
-    public struct AHardwareBuffer { }
-    public struct EGLFrameTokenANGLE { }
-    public struct EGLnsecsANDROID { }
-    public struct EGLLabelKHR { }
-    public struct EGLStreamKHR { }
-    public struct EGLDEBUGPROCKHR { }
-
-
     public static class Instance
     {
         private static MessageHandler RPC { get; }
 
         static Instance()
         {
-            RPC = new MessageHandler(typeof(Instance), MemoryMappedFile.CreateOrOpen("test", ushort.MaxValue), new AutoResetEvent(false));
+            SafeMemoryMappedViewUnixHandle buf = LibC.MMap(IntPtr.Zero, 1024, MappingProtection.Read | MappingProtection.Write, MappingFlags.Shared | MappingFlags.Anonymous, null, 0);
+            RPC = new MessageHandler(typeof(Instance), buf, new AutoResetEvent(false));
         }
 
         private static void EnsureEGLLoaded() { }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglChooseConfig))]
-        public static bool eglChooseConfig(EGLDisplay display, EGLint[] attrib_list, ref EGLConfig configs, EGLint config_size, ref EGLint num_config)
+        public static bool eglChooseConfig(EGLDisplay display, ConfigAttributes[] attrib_list, ref EGLConfig[] configs, int config_size, ref int num_config)
         {
             EnsureEGLLoaded();
             return default;
@@ -60,7 +60,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglCreateContext))]
-        public static EGLContext eglCreateContext(EGLDisplay display, EGLConfig config, EGLContext share_context, ref EGLint attrib_list)
+        public static EGLContext eglCreateContext(EGLDisplay display, EGLConfig config, EGLContext share_context, ContextAttributes[] attrib_list)
         {
             EnsureEGLLoaded();
             return default;
@@ -137,7 +137,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglGetError))]
-        public static EGLint eglGetError()
+        public static ErrorType eglGetError()
         {
             EnsureEGLLoaded();
             return default;
@@ -165,7 +165,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglQueryString))]
-        public static string eglQueryString(EGLDisplay display, EGLint name)
+        public static string eglQueryString(EGLDisplay display, QueryStringType name)
         {
             EnsureEGLLoaded();
             return default;
@@ -200,7 +200,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglWaitNative))]
-        public static bool eglWaitNative(EGLint engine)
+        public static bool eglWaitNative(WaitNativeEngine engine)
         {
             EnsureEGLLoaded();
             return default;
@@ -228,7 +228,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglSwapInterval))]
-        public static bool eglSwapInterval(EGLDisplay display, EGLint interval)
+        public static bool eglSwapInterval(EGLDisplay display, int interval)
         {
             EnsureEGLLoaded();
             return default;
@@ -249,7 +249,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglCreatePbufferFromClientBuffer))]
-        public static EGLSurface eglCreatePbufferFromClientBuffer(EGLDisplay display, EGLenum buftype, EGLClientBuffer buffer, EGLConfig config, ref EGLint attrib_list)
+        public static EGLSurface eglCreatePbufferFromClientBuffer(EGLDisplay display, BufferType buftype, EGLClientBuffer buffer, EGLConfig config, ref EGLint attrib_list)
         {
             EnsureEGLLoaded();
             return default;
@@ -277,7 +277,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglCreateSync))]
-        public static EGLSync eglCreateSync(EGLDisplay display, EGLenum type, EGLAttrib[] attrib_list)
+        public static EGLSync eglCreateSync(EGLDisplay display, SyncType type, EGLAttrib[] attrib_list)
         {
             EnsureEGLLoaded();
             return default;
@@ -291,7 +291,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglClientWaitSync))]
-        public static EGLint eglClientWaitSync(EGLDisplay display, EGLSync sync, EGLint flags, EGLTime timeout)
+        public static WaitSyncResult eglClientWaitSync(EGLDisplay display, EGLSync sync, WaitSyncFlags flags, EGLTime timeout)
         {
             EnsureEGLLoaded();
             return default;
@@ -305,7 +305,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglCreateImage))]
-        public static EGLImage eglCreateImage(EGLDisplay display, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, EGLAttrib[] attrib_list)
+        public static EGLImage eglCreateImage(EGLDisplay display, EGLContext ctx, TargetType target, EGLClientBuffer buffer, EGLAttrib[] attrib_list)
         {
             EnsureEGLLoaded();
             return default;
@@ -319,7 +319,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglGetPlatformDisplay))]
-        public static EGLDisplay eglGetPlatformDisplay(EGLenum platform, IntPtr native_display, EGLAttrib[] attrib_list)
+        public static EGLDisplay eglGetPlatformDisplay(uint platform, IntPtr native_display, EGLAttrib[] attrib_list)
         {
             EnsureEGLLoaded();
             return default;
@@ -340,7 +340,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglWaitSync))]
-        public static bool eglWaitSync(EGLDisplay display, EGLSync sync, EGLint flags)
+        public static bool eglWaitSync(EGLDisplay display, EGLSync sync, WaitSyncFlags flags)
         {
             EnsureEGLLoaded();
             return default;
@@ -354,7 +354,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglPostSubBufferNV))]
-        public static bool eglPostSubBufferNV(EGLDisplay display, EGLSurface surface, EGLint x, EGLint y, EGLint width, EGLint height)
+        public static bool eglPostSubBufferNV(EGLDisplay display, EGLSurface surface, int x, int y, int width, int height)
         {
             EnsureEGLLoaded();
             return default;
@@ -410,7 +410,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglCreateImageKHR))]
-        public static EGLImageKHR eglCreateImageKHR(EGLDisplay display, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, ref EGLint attrib_list)
+        public static EGLImageKHR eglCreateImageKHR(EGLDisplay display, EGLContext ctx, TargetType target, EGLClientBuffer buffer, ref EGLint attrib_list)
         {
             EnsureEGLLoaded();
             return default;
