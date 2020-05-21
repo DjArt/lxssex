@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using static EGL.Constants;
 
 namespace EGL
 {
     public enum TargetType : uint
     {
-        Texture2D = 0x30B1,
-        Texture3D = 0x30B2,
-        TextureCubeMapPositiveX = 0x30B3,
-        TextureCubeMapNegativeX = 0x30B4,
-        TextureCubeMapPositiveY = 0x30B5,
-        TextureCubeMapNegativeY = 0x30B6,
-        TextureCubeMapPositiveZ = 0x30B7,
-        TextureCubeMapNegativeZ = 0x30B8,
-        RenderBuffer = 0x30B9
+        Texture2D = EGL_GL_TEXTURE_2D,
+        Texture3D = EGL_GL_TEXTURE_3D,
+        TextureCubeMapPositiveX = EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+        TextureCubeMapNegativeX = EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+        TextureCubeMapPositiveY = EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+        TextureCubeMapNegativeY = EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+        TextureCubeMapPositiveZ = EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+        TextureCubeMapNegativeZ = EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+        RenderBuffer = EGL_GL_RENDERBUFFER,
     }
 }

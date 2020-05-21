@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using static EGL.Constants;
 
 namespace EGL
 {
     public enum API : uint
     {
-        OpenGL = 12450,
-        OpenGLES = 12448,
-        OpenVG = 12449
+        OpenGLES = EGL_OPENGL_ES_API,
+        OpenVG = EGL_OPENVG_API,
+        OpenGL = EGL_OPENGL_API,
     }
 }
