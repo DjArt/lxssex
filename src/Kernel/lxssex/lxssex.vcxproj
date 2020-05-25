@@ -160,6 +160,12 @@
     <ClCompile Include="fbvfsentry.c" />
     <ClCompile Include="ofbdev.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lxcore\lxcore.vcxproj">
+      <Project>{b22803ee-c4b6-4f9a-b31b-8fd896bd6eb9}</Project>
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
