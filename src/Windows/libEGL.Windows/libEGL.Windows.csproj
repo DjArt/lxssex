@@ -5,4 +5,10 @@
     <RootNamespace>EGL</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\libEGL.Shared\libEGL.Shared.csproj" />
+    <ProjectReference Include="..\..\Shared\libEGL\libEGL.csproj" />
+    <ProjectReference Include="..\..\Shared\lxssex.RPC\lxssex.RPC.csproj" />
+  </ItemGroup>
+
 </Project>
