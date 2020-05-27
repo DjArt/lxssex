@@ -1,5 +1,7 @@
 #pragma once
 
+#include <wdm.h>
+
 typedef INT64 OFF_T, * POFF_T;
 
 // Minor Devices in Memory Major Class
@@ -53,13 +55,21 @@ typedef struct _VFS_MINOR_DEVICE
     ULONG Reserved2;
     UINT64 Reserved3[25];
 } VFS_MINOR_DEVICE, * PVFS_MINOR_DEVICE;
+
+typedef struct _VFS_MMAP_FILE_CONTEXT
+{
+    EX_PUSH_LOCK PushLock;
+    PVOID MMapContext;
+} VFS_MMAP_FILE_CONTEXT, * PVFS_MMAP_FILE_CONTEXT;
+
 typedef struct _LX_FILE
 {
     UINT64 Reserved1;
-    PVOID MMFileContext;
+    PVFS_MMAP_FILE_CONTEXT MmapContext;
     PHANDLE FileHandle;
     UINT64 Reserved2[29];
 } LX_FILE, * PLX_FILE;
+
 typedef struct _VFS_INODE VFS_INODE, * PVFS_INODE;
 
 // VFS Minor Device Callbacks

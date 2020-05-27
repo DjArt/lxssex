@@ -1,5 +1,7 @@
 #pragma once
 
+#include <wdm.h>
+
 typedef struct _LX_PICOCONTEXT_MEMORY
 {
     SIZE_T field_0;

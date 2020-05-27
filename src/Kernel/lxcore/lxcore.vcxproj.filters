@@ -15,16 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="vfs.h">
+    <ClInclude Include="include\lxmm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="default.h">
+    <ClInclude Include="include\vfs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lxcoreapi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lxmm.h">
+    <ClInclude Include="include\lxcore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -34,7 +31,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lxcoreapi.cpp">
+    <ClCompile Include="lxcore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
