@@ -1,0 +1,87 @@
+;
+; lxssex.WM.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=lxssex.WM.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+PnpLockDown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+lxssex.WM_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+lxssex.WM.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%lxssex.WM.DeviceDesc%=lxssex.WM_Device, Root\lxssex.WM ; TODO: edit hw-id
+
+[lxssex.WM_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+lxssex.WM.sys
+
+;-------------- Service installation
+[lxssex.WM_Device.NT.Services]
+AddService = lxssex.WM,%SPSVCINST_ASSOCSERVICE%, lxssex.WM_Service_Inst
+
+; -------------- lxssex.WM driver install sections
+[lxssex.WM_Service_Inst]
+DisplayName    = %lxssex.WM.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\lxssex.WM.sys
+
+;
+;--- lxssex.WM_Device Coinstaller installation ------
+;
+
+[lxssex.WM_Device.NT.CoInstallers]
+AddReg=lxssex.WM_Device_CoInstaller_AddReg
+CopyFiles=lxssex.WM_Device_CoInstaller_CopyFiles
+
+[lxssex.WM_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[lxssex.WM_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[lxssex.WM_Device.NT.Wdf]
+KmdfService =  lxssex.WM, lxssex.WM_wdfsect
+[lxssex.WM_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "lxssex.WM Installation Disk"
+lxssex.WM.DeviceDesc = "lxssex.WM Device"
+lxssex.WM.SVCDESC = "lxssex.WM Service"
