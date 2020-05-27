@@ -13,27 +13,9 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
-    <Filter Include="Header Files\linux">
-      <UniqueIdentifier>{b8851044-a260-422a-a90b-c153b17cbabb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\subsystem">
-      <UniqueIdentifier>{83543db6-cbd0-4d52-8554-ffceff2163b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\windows">
-      <UniqueIdentifier>{034f6465-f56e-4930-bbae-5d901916d9ce}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Source Files\linux">
-      <UniqueIdentifier>{0a552534-97bf-4abe-ab65-67f384c01c58}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\windows">
-      <UniqueIdentifier>{6cde464c-0ef3-44d6-82f7-241c22eef800}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\subsystem">
-      <UniqueIdentifier>{8edfef39-636b-4c7a-81d8-e2e534fa2deb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,37 +24,19 @@
     </Inf>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="default.h">
+    <ClInclude Include="include\vfsplugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fbdev.h">
-      <Filter>Header Files\linux</Filter>
-    </ClInclude>
-    <ClInclude Include="types.h">
-      <Filter>Header Files\linux</Filter>
-    </ClInclude>
-    <ClInclude Include="ofbdev.h">
-      <Filter>Header Files\windows</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lxcore_stub\lxcoreapi.h">
-      <Filter>Header Files\subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lxcore_stub\vfs.h">
-      <Filter>Header Files\subsystem</Filter>
+    <ClInclude Include="vfsplugin.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="driverentry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fbdev.cpp">
-      <Filter>Source Files\linux</Filter>
-    </ClCompile>
-    <ClCompile Include="fbvfsentry.c">
-      <Filter>Source Files\linux</Filter>
-    </ClCompile>
-    <ClCompile Include="ofbdev.cpp">
-      <Filter>Source Files\windows</Filter>
+    <ClCompile Include="vfsplugin.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -67,29 +67,40 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <OutDir>$(ProjectDir)bin\$(ConfigurationName)\$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(ConfigurationName)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <OutDir>$(ProjectDir)bin\$(ConfigurationName)\$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(ConfigurationName)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <OutDir>$(ProjectDir)bin\$(ConfigurationName)\$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(ConfigurationName)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <OutDir>$(ProjectDir)bin\$(ConfigurationName)\$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(ConfigurationName)\$(Platform)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <TreatWarningAsError>false</TreatWarningAsError>
       <ExceptionHandling>Async</ExceptionHandling>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>default.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
       <CallingConvention>StdCall</CallingConvention>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\kernel\lxcore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>lxcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <ShowProgress>LinkVerbose</ShowProgress>
+      <AdditionalLibraryDirectories>$(SolutionDir)src\kernel\lxcore\bin\$(ConfigurationName)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -97,14 +108,17 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <TreatWarningAsError>false</TreatWarningAsError>
       <ExceptionHandling>Async</ExceptionHandling>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>default.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
       <CallingConvention>StdCall</CallingConvention>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\kernel\lxcore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>lxcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <ShowProgress>LinkVerbose</ShowProgress>
+      <AdditionalLibraryDirectories>$(SolutionDir)src\kernel\lxcore\bin\$(ConfigurationName)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,8 +126,10 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <TreatWarningAsError>false</TreatWarningAsError>
       <ExceptionHandling>Async</ExceptionHandling>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>default.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\kernel\lxcore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Inf>
       <TimeStamp>0.0.0.2</TimeStamp>
@@ -123,6 +139,7 @@
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
       <ShowProgress>LinkVerbose</ShowProgress>
+      <AdditionalLibraryDirectories>$(SolutionDir)src\kernel\lxcore\bin\$(ConfigurationName)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,14 +147,17 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <TreatWarningAsError>false</TreatWarningAsError>
       <ExceptionHandling>Async</ExceptionHandling>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>default.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\kernel\lxcore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>lxcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
       <ShowProgress>LinkVerbose</ShowProgress>
+      <AdditionalLibraryDirectories>$(SolutionDir)src\kernel\lxcore\bin\$(ConfigurationName)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -147,18 +167,12 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\lxcore_stub\lxcoreapi.h" />
-    <ClInclude Include="..\lxcore_stub\vfs.h" />
-    <ClInclude Include="default.h" />
-    <ClInclude Include="fbdev.h" />
-    <ClInclude Include="ofbdev.h" />
-    <ClInclude Include="types.h" />
+    <ClInclude Include="include\vfsplugin.h" />
+    <ClInclude Include="vfsplugin.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="driverentry.cpp" />
-    <ClCompile Include="fbdev.cpp" />
-    <ClCompile Include="fbvfsentry.c" />
-    <ClCompile Include="ofbdev.cpp" />
+    <ClCompile Include="vfsplugin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lxcore\lxcore.vcxproj">
