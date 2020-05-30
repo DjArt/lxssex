@@ -174,9 +174,9 @@ __I_DLLSPEC(VOID NTAPI VfsDeviceMinorDereference(_In_ PVFS_MINOR_DEVICE MinorDev
 __I_DLLSPEC(BOOLEAN NTAPI LxpDevMiscRegister(_In_ PLX_INSTANCE Instance, _In_ PVFS_MINOR_DEVICE MinorDevice, _In_ ULONG MinorDeviceNumber));
 
 // LxCore VFS File APIs
-__I_DLLSPEC(PVFS_FILE NTAPI VfsFileAllocate(_In_ ULONG FileContextSize, _In_ PVFS_FILE_CALLBACKS FileCallbacks));
-__I_DLLSPEC(VOID NTAPI VfsFileSetEpollState(_In_ PVOID FileContext, _In_ PEPOLL_FILE_STATE State));
-__I_DLLSPEC(VOID NTAPI VfsFileSetMmFileContext(_In_ PVOID FileContext, _In_ PVFS_MMAP_FILE_CONTEXT MmapFileContext));
+__I_DLLSPEC(PVFS_FILE NTAPI VfsFileAllocate(_In_ ULONG FileSize, _In_ PVFS_FILE_CALLBACKS FileCallbacks));
+__I_DLLSPEC(VOID NTAPI VfsFileSetEpollState(_In_ PVFS_FILE File, _In_ PEPOLL_FILE_STATE State));
+__I_DLLSPEC(VOID NTAPI VfsFileSetMmFileContext(_In_ PVFS_FILE File, _In_ PVFS_MMAP_FILE_CONTEXT MmapFileContext));
 
 // LXCore Epoll APIs
 __I_DLLSPEC(PVOID NTAPI LxpEpollFileStateInitialize(_In_ PEPOLL_FILE_STATE FileState, _In_ UINT64 Flags));
