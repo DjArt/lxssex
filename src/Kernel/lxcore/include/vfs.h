@@ -56,24 +56,32 @@ typedef struct _VFS_MINOR_DEVICE
     UINT64 Reserved3[25];
 } VFS_MINOR_DEVICE, * PVFS_MINOR_DEVICE;
 
+typedef struct _VFS_FILE
+{
+
+} VFS_FILE, * PVFS_FILE;
+
+typedef struct _EPOLL_FILE_STATE
+{
+    UINT64 Unknown0;
+    UINT64 Unknown1;
+    UINT64 Unknown2;
+    UINT64 Unknown3;
+    UINT64 Unknown4;
+    UINT64 Unknown5;
+    UINT64 Unknown6;
+} EPOLL_FILE_STATE, * PEPOLL_FILE_STATE;
+
 typedef struct _VFS_MMAP_FILE_CONTEXT
 {
     EX_PUSH_LOCK PushLock;
     PVOID MMapContext;
 } VFS_MMAP_FILE_CONTEXT, * PVFS_MMAP_FILE_CONTEXT;
 
-typedef struct _LX_FILE
-{
-    UINT64 Reserved1;
-    PVFS_MMAP_FILE_CONTEXT MmapContext;
-    PHANDLE FileHandle;
-    UINT64 Reserved2[29];
-} LX_FILE, * PLX_FILE;
-
 typedef struct _VFS_INODE VFS_INODE, * PVFS_INODE;
 
 // VFS Minor Device Callbacks
-typedef INT(VFS_MINOR_DEVICE_OPEN_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_MINOR_DEVICE MinorDevice, _In_ ULONG OpenFlags, _Out_ PVOID* OpenedFile);
+typedef INT(VFS_MINOR_DEVICE_OPEN_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_MINOR_DEVICE MinorDevice, _In_ ULONG OpenFlags, _Out_ PVFS_FILE* File);
 typedef VFS_MINOR_DEVICE_OPEN_CALLBACK* PVFS_MINOR_DEVICE_OPEN_CALLBACK;
 typedef VOID(VFS_MINOR_DEVICE_UNINITIALIZE_CALLBACK) (_In_ PVFS_MINOR_DEVICE MinorDevice);
 typedef VFS_MINOR_DEVICE_UNINITIALIZE_CALLBACK* PVFS_MINOR_DEVICE_UNINITIALIZE_CALLBACK;
@@ -86,16 +94,16 @@ typedef struct _VFS_MINOR_DEVICE_CALLBACKS
 } VFS_MINOR_DEVICE_CALLBACKS, * PVFS_MINOR_DEVICE_CALLBACKS;
 
 // VFS File Callbacks
-typedef INT(VFS_FILE_DELETE_CALLBACK) (_In_ PVOID CallContext, _In_ PVOID FileContext);
-typedef INT(VFS_FILE_FLUSH_CALLBACK) (_In_ PVOID CallContext, _In_ PVOID FileContext);
-typedef INT(VFS_FILE_IOCTL_CALLBACK) (_In_ PVOID CallContext, _In_ PVOID FileContext, _In_ ULONG Ioctl, _Inout_ PVOID Buffer);
-typedef INT(VFS_FILE_READ_CALLBACK) (_In_ PVOID CallContext, _In_ PVOID FileContext, _Inout_ PVOID Buffer, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
-typedef INT(VFS_FILE_READ_VECTOR_CALLBACK) (_In_ PVOID CallContext, _In_ PVOID FileContext, _Inout_ PVOID IoVector, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
-typedef INT(VFS_FILE_RELEASE_CALLBACK) (_In_ PVOID CallContext, _In_ PVOID FileContext);
-typedef INT(VFS_FILE_SEEK_CALLBACK) (_In_ PVOID CallContext, _In_ PVOID FileContext, _In_ OFF_T POffset, _In_ INT Whence, _Out_ POFF_T PResultOffset);
-typedef INT(VFS_FILE_WRITE_CALLBACK) (_In_ PVOID CallContext, _In_ PVOID FileContext, _Inout_ PVOID Buffer, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
-typedef INT(VFS_FILE_WRITE_VECTOR_CALLBACK) (_In_ PVOID CallContext, _In_ PVOID FileContext, _Inout_ PVOID IoVector, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
-typedef INT(VFS_FILE_MMAP_CALLBACK) (PVOID CallContext, _In_ PVOID FileContext, _Inout_ PVOID* Unk0, LARGE_INTEGER Length, ULONG Protection, INT Flags, LARGE_INTEGER Start, ULONG End);
+typedef INT(VFS_FILE_DELETE_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File);
+typedef INT(VFS_FILE_FLUSH_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File);
+typedef INT(VFS_FILE_IOCTL_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _In_ ULONG Ioctl, _Inout_ PVOID Buffer);
+typedef INT(VFS_FILE_READ_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID Buffer, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
+typedef INT(VFS_FILE_READ_VECTOR_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID IoVector, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
+typedef INT(VFS_FILE_RELEASE_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File);
+typedef INT(VFS_FILE_SEEK_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _In_ OFF_T POffset, _In_ INT Whence, _Out_ POFF_T PResultOffset);
+typedef INT(VFS_FILE_WRITE_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID Buffer, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
+typedef INT(VFS_FILE_WRITE_VECTOR_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID IoVector, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
+typedef INT(VFS_FILE_MMAP_CALLBACK) (PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID* Unk0, LARGE_INTEGER Length, ULONG Protection, INT Flags, LARGE_INTEGER Start, ULONG End);
 
 typedef VFS_FILE_DELETE_CALLBACK* PVFS_FILE_DELETE_CALLBACK;
 typedef VFS_FILE_FLUSH_CALLBACK* PVFS_FILE_FLUSH_CALLBACK;
