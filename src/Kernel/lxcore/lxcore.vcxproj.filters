@@ -18,10 +18,10 @@
     <ClInclude Include="include\lxmm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\vfs.h">
+    <ClInclude Include="include\lxcore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\lxcore.h">
+    <ClInclude Include="include\vfs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
