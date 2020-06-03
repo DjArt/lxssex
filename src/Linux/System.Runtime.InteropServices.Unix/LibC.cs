@@ -14,7 +14,7 @@ namespace System.Runtime.InteropServices.Unix
             {
                 fixed (T* p = &data)
                 {
-                    int status = Imports.Ioctl(handle, request, (IntPtr)p);
+                    int status = Imports.Ioctl(handle, request, p);
                     if (status < 0) throw new UnixIOException(status);
                     return (uint)status;
                 }

@@ -12,6 +12,6 @@ namespace System.Runtime.InteropServices.Unix
         private SafeMemoryMappedViewUnixHandle() : base(true) { }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        protected override bool ReleaseHandle() => Imports.MUnMap(handle, ByteLength) != -1;
+        protected override bool ReleaseHandle() => Imports.MUnmap(handle, ByteLength) != -1;
     }
 }
