@@ -191,7 +191,7 @@ __I_DLLSPEC(NTSTATUS NTAPI LxpUtilCreateTemporaryDirectory(HANDLE DirectoryHandl
 
 
 //LxCore Memory API
-__I_DLLSPEC(INT NTAPI LxpMmAllocateMapVm(PVOID CallContext, PLX_PICOCONTEXT_MEMORY a1, HANDLE SectionHandle, PVFS_FILE FileContext, PVOID a4, LARGE_INTEGER Length, LARGE_INTEGER Start, LARGE_INTEGER SectionMaximumSize, ULONG Protection, INT Flags, ULONG End));
+__I_DLLSPEC(INT NTAPI LxpMmAllocateMapVm(PVOID CallContext, PLX_PICOCONTEXT_MEMORY a1, HANDLE SectionHandle, PVFS_FILE File, PVOID a4, LARGE_INTEGER Length, LARGE_INTEGER Start, LARGE_INTEGER SectionMaximumSize, ULONG Protection, INT Flags, ULONG End));
 
 __I_DLLSPEC(BOOLEAN NTAPI LxpProcessGetCurrent(PLX_PICOCONTEXT* context));
 
