@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
     <Platforms>x64;arm64</Platforms>
     <RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
     <RootNamespace>EGL</RootNamespace>
@@ -21,7 +22,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-28925-01" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-29002-02" />
   </ItemGroup>
 
   <ItemGroup>
