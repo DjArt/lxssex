@@ -2,20 +2,22 @@
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2" 
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
-  IgnorableNamespaces="uap uap4 mp">
+  IgnorableNamespaces="desktop4 iot2 mp uap uap4">
 
   <Identity
-    Name="f7973fe8-59b4-4f2b-9bbf-9dd38cac75a8"
+    Name="90c1e78d-bd71-411b-8ffd-2d5b765a4894"
     Publisher="CN=artle"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="f7973fe8-59b4-4f2b-9bbf-9dd38cac75a8" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="90c1e78d-bd71-411b-8ffd-2d5b765a4894" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>lxssex.Manager</DisplayName>
+    <DisplayName>lxssex.WindowManager</DisplayName>
     <PublisherDisplayName>djart</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -30,24 +32,26 @@
 
   <Applications>
     <Application Id="App"
+      desktop4:SupportsMultipleInstances="true"
+	    iot2:SupportsMultipleInstances="true"
       Executable="$targetnametoken$.exe"
-      EntryPoint="lxssex.Manager.App">
+      EntryPoint="lxssex.WindowManager.App">
       <uap:VisualElements
-        DisplayName="WSL Manager"
+        DisplayName="lxssex Window Manager"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="lxssex.Manager"
+        Description="lxssex.WindowManager"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.protocol" EntryPoint="lxssex.Manager.App">
-          <uap:Protocol Name="lxssex-manager">
-            <uap:DisplayName>lxssex Manager</uap:DisplayName>
+        <uap:Extension Category="windows.protocol" EntryPoint="lxssex.WindowManager.App">
+          <uap:Protocol Name="lxssex-wm">
+            <uap:DisplayName>lxssex Window Manager</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="lxssex.Manager.App">
+        <Extension Category="windows.backgroundTasks" EntryPoint="lxssex.WindowManager.App">
           <BackgroundTasks>
             <Task Type="systemEvent"/>
           </BackgroundTasks>
@@ -58,8 +62,8 @@
   <Extensions>
     <Extension Category="windows.activatableClass.inProcessServer">
       <InProcessServer>
-        <Path>lxssex.Manager.exe</Path>
-        <ActivatableClass ActivatableClassId="lxssex.Manager.App" ThreadingModel="both"/>
+        <Path>lxssex.WindowManager.exe</Path>
+        <ActivatableClass ActivatableClassId="lxssex.WindowManager.App" ThreadingModel="both"/>
       </InProcessServer>
     </Extension>
   </Extensions>
