@@ -20,6 +20,24 @@
     <Filter Include="Header Files\include">
       <UniqueIdentifier>{2bbf0d89-e046-41a3-a497-146253c0a00c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\include\km">
+      <UniqueIdentifier>{24d329db-f216-48a5-82ba-83bfb36a7589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\um">
+      <UniqueIdentifier>{8c7ac10c-6b2e-4228-a0d2-f2eef91de429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\service">
+      <UniqueIdentifier>{bea36df3-e86d-4172-8322-a2eae6e3ec03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\km\service">
+      <UniqueIdentifier>{0ff300b3-0f95-4db7-ac04-f92c65f0e5fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\service">
+      <UniqueIdentifier>{62b36c5f-1607-4caa-b090-282da66a9ba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\um\service">
+      <UniqueIdentifier>{1d619e41-3802-4bc8-8455-4f7c83224272}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Inf Include="lxssex.inf">
@@ -30,8 +48,26 @@
     <ClInclude Include="vfsplugin.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\vfsplugin.h">
-      <Filter>Header Files\include</Filter>
+    <ClInclude Include="include\km\vfsplugin.h">
+      <Filter>Header Files\include\km</Filter>
+    </ClInclude>
+    <ClInclude Include="include\km\service\lxssex.Service.h">
+      <Filter>Header Files\include\km\service</Filter>
+    </ClInclude>
+    <ClInclude Include="include\um\service\lxssex.Service.Shared.h">
+      <Filter>Header Files\include\um\service</Filter>
+    </ClInclude>
+    <ClInclude Include="include\um\service\lxssex.Service.Windows.h">
+      <Filter>Header Files\include\um\service</Filter>
+    </ClInclude>
+    <ClInclude Include="service\lxssex.Service.Linux.hpp">
+      <Filter>Header Files\service</Filter>
+    </ClInclude>
+    <ClInclude Include="service\lxssex.Service.Shared.hpp">
+      <Filter>Header Files\service</Filter>
+    </ClInclude>
+    <ClInclude Include="service\lxssex.Service.Windows.hpp">
+      <Filter>Header Files\service</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -41,5 +77,19 @@
     <ClCompile Include="vfsplugin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="service\lxssex.Service.Linux.cpp">
+      <Filter>Source Files\service</Filter>
+    </ClCompile>
+    <ClCompile Include="service\lxssex.Service.Shared.cpp">
+      <Filter>Source Files\service</Filter>
+    </ClCompile>
+    <ClCompile Include="service\lxssex.Service.Windows.cpp">
+      <Filter>Source Files\service</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lxssexAccessCapability.sccd">
+      <Filter>Driver Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

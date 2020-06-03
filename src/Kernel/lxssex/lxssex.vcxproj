@@ -95,11 +95,13 @@
       </PrecompiledHeaderFile>
       <CallingConvention>StdCall</CallingConvention>
       <AdditionalIncludeDirectories>$(SolutionDir)src\kernel\lxcore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4063;4201;4214;5040;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>lxcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
-      <ShowProgress>LinkVerbose</ShowProgress>
+      <ShowProgress>
+      </ShowProgress>
       <AdditionalLibraryDirectories>$(SolutionDir)src\kernel\lxcore\bin\$(ConfigurationName)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -113,11 +115,13 @@
       </PrecompiledHeaderFile>
       <CallingConvention>StdCall</CallingConvention>
       <AdditionalIncludeDirectories>$(SolutionDir)src\kernel\lxcore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4063;4201;4214;5040;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>lxcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
-      <ShowProgress>LinkVerbose</ShowProgress>
+      <ShowProgress>
+      </ShowProgress>
       <AdditionalLibraryDirectories>$(SolutionDir)src\kernel\lxcore\bin\$(ConfigurationName)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -130,6 +134,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)src\kernel\lxcore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4063;4201;4214;5040;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Inf>
       <TimeStamp>0.0.0.2</TimeStamp>
@@ -138,7 +143,8 @@
       <AdditionalDependencies>lxcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
-      <ShowProgress>LinkVerbose</ShowProgress>
+      <ShowProgress>
+      </ShowProgress>
       <AdditionalLibraryDirectories>$(SolutionDir)src\kernel\lxcore\bin\$(ConfigurationName)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -151,12 +157,14 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)src\kernel\lxcore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4063;4201;4214;5040;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>lxcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
-      <ShowProgress>LinkVerbose</ShowProgress>
+      <ShowProgress>
+      </ShowProgress>
       <AdditionalLibraryDirectories>$(SolutionDir)src\kernel\lxcore\bin\$(ConfigurationName)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -167,18 +175,33 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\vfsplugin.h" />
+    <ClInclude Include="include\km\service\lxssex.Service.h" />
+    <ClInclude Include="include\km\vfsplugin.h" />
+    <ClInclude Include="include\um\service\lxssex.Service.Shared.h" />
+    <ClInclude Include="include\um\service\lxssex.Service.Windows.h" />
+    <ClInclude Include="service\lxssex.Service.Linux.hpp" />
+    <ClInclude Include="service\lxssex.Service.Shared.hpp" />
+    <ClInclude Include="service\lxssex.Service.Windows.hpp" />
     <ClInclude Include="vfsplugin.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="driverentry.cpp" />
+    <ClCompile Include="service\lxssex.Service.Linux.cpp" />
+    <ClCompile Include="service\lxssex.Service.Shared.cpp" />
+    <ClCompile Include="service\lxssex.Service.Windows.cpp" />
     <ClCompile Include="vfsplugin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\cppapi\cppapi.vcxproj">
+      <Project>{a861eef0-7150-43db-8e00-bc2c6ded8cfa}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\lxcore\lxcore.vcxproj">
       <Project>{b22803ee-c4b6-4f9a-b31b-8fd896bd6eb9}</Project>
       <Private>false</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lxssexAccessCapability.sccd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
