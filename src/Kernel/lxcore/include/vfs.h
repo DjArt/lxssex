@@ -56,10 +56,14 @@ typedef struct _VFS_MINOR_DEVICE
     UINT64 Reserved3[25];
 } VFS_MINOR_DEVICE, * PVFS_MINOR_DEVICE;
 
+#ifdef __cplusplus
 typedef struct _VFS_FILE
 {
 
 } VFS_FILE, * PVFS_FILE;
+#else
+typedef struct _VFS_FILE VFS_FILE, * PVFS_FILE;
+#endif
 
 typedef struct _EPOLL_FILE_STATE
 {
@@ -190,5 +194,5 @@ typedef struct _VFS_ENTRY
         {
             ULONG Mode;
         } File;
-    };
+    } Data;
 } VFS_ENTRY, *PVFS_ENTRY;
