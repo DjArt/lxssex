@@ -54,8 +54,8 @@ VfsFileAllocate						   @54
 ;VfsFileGetFlags					   @55
 ;VfsFileGetInode					   @56
 ;VfsFileSeekHelper					   @57
-;VfsFileSetEpollState				   @58
-;VfsFileSetMmFileContext			   @59
+VfsFileSetEpollState				   @58
+VfsFileSetMmFileContext				   @59
 ;VfsFileUpdateOffset				   @60
 VfsInitializeStartupEntries			   @61
 ;VfsInodeAllocate					   @62
