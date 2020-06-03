@@ -1,0 +1,9 @@
+#pragma once
+
+#include "lxssex.Service.Shared.h"
+
+typedef struct _CHANNEL_REGISTRATION_WINDOWS : CHANNEL_REGISTRATION
+{
+	HANDLE ChannelEvent;
+	PVOID SharedSection;
+} CHANNEL_REGISTRATION_WINDOWS, * PCHANNEL_REGISTRATION_WINDOWS;
