@@ -1,42 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
-    <Platforms>x64;arm64</Platforms>
-    <RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
-    <RootNamespace>EGL</RootNamespace>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>8.0</LangVersion>
+		<Platforms>x64;arm64</Platforms>
+		<RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
+		<RootNamespace>EGL</RootNamespace>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
-    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
-    <DebugSymbols>false</DebugSymbols>
-    <DebugType>none</DebugType>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+		<IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+		<DebugSymbols>false</DebugSymbols>
+		<DebugType>none</DebugType>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <RdXmlFile Include="rd.xml" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-29002-02" />
-  </ItemGroup>
+	<ItemGroup>
+		<RdXmlFile Include="rd.xml" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-29118-01" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Shared\libEGL.Shared\libEGL.Shared.csproj" />
-    <ProjectReference Include="..\..\Shared\lxssex.RPC\lxssex.RPC.csproj" />
-    <ProjectReference Include="..\System.Runtime.InteropServices.Unix\System.Runtime.InteropServices.Unix.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Shared\libEGL.Shared\libEGL.Shared.csproj" />
+		<ProjectReference Include="..\..\Shared\lxssex.RPC\lxssex.RPC.csproj" />
+		<ProjectReference Include="..\System.Runtime.InteropServices.Unix\System.Runtime.InteropServices.Unix.csproj" />
+	</ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT'">
-      <Exec Command="ubuntu run bash build.sh linux-$(Platform) $(Configuration)" />
-  </Target>
-  
-  <Target Name="PostClean" AfterTargets="Clean" Condition="'$(OS)' == 'Windows_NT'">
-      <Exec Command="ubuntu run bash clean.sh linux-$(Platform) $(Configuration)" />
-  </Target>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT'">
+		<Exec Command="ubuntu run bash build.sh linux-$(Platform) $(Configuration)" />
+	</Target>
+	
+	<Target Name="PostClean" AfterTargets="Clean" Condition="'$(OS)' == 'Windows_NT'">
+		<Exec Command="ubuntu run bash clean.sh linux-$(Platform) $(Configuration)" />
+	</Target>
 
 </Project>
