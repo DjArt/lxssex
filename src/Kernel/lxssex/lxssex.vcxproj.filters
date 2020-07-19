@@ -88,6 +88,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="lxssex.def">
+      <Filter>Driver Files</Filter>
+    </None>
     <None Include="lxssexAccessCapability.sccd">
       <Filter>Driver Files</Filter>
     </None>
