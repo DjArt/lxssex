@@ -1,0 +1,6 @@
+EXPORTS
+CloseChannel
+CreateChannel
+SetChannelClosedCallback
+VfsRegisterPlugin
+VfsUnregisterPlugin
