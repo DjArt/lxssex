@@ -10,7 +10,7 @@ VFS_ENTRY LinuxServiceVfsEntries[1] =
                 .Uid = 0,
                 .Gid = 0,
                 .Mode = S_IFCHR | S_IWUSR | S_IRUSR | S_IROTH | S_IWOTH,
-                .MinorDeviceId = 0,
+                .MinorDeviceId = 300,
                 .MajorDeviceId = 29
             }
         }
@@ -19,23 +19,18 @@ VFS_ENTRY LinuxServiceVfsEntries[1] =
 
 VFS_MINOR_DEVICE_CALLBACKS LinuxServiceDeviceCallbacks =
 {
-    LinuxServiceOpen,
-    LinuxServiceUninitialize
+    .Open = LinuxServiceOpen,
+    .Uninitialize = LinuxServiceUninitialize
 };
 
 VFS_FILE_CALLBACKS LinuxServiceFileCallbacks =
 {
-    LinuxServiceDelete,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    LinuxServiceMmap,
-    LinuxServiceIoctl
+    .Delete = LinuxServiceDelete,
+    .MapManual = LinuxServiceMmap,
+    .Ioctl = LinuxServiceIoctl
 };
 
-INT LinuxServiceInitialize(_In_ PLX_INSTANCE instance)
+NTSTATUS LinuxServiceInitialize(_In_ PLX_INSTANCE instance)
 {
     LONG error;
     PLINUX_SERVICE_DEVICE device = (PLINUX_SERVICE_DEVICE)(VfsDeviceMinorAllocate(&LinuxServiceDeviceCallbacks, sizeof(LINUX_SERVICE_DEVICE)));
@@ -59,7 +54,7 @@ VOID LinuxServiceUninitialize(_In_ PVFS_MINOR_DEVICE Device)
     UNREFERENCED_PARAMETER(Device);
 }
 
-INT LinuxServiceOpen(_In_ PVOID CallContext, _In_ PVFS_MINOR_DEVICE Device, _In_ ULONG Flags, _Out_ PVFS_FILE* File)
+INT LinuxServiceOpen(_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_MINOR_DEVICE Device, _In_ ULONG Flags, _Out_ PVFS_FILE* File)
 {
     UNREFERENCED_PARAMETER(CallContext);
     UNREFERENCED_PARAMETER(Flags);
@@ -74,18 +69,19 @@ INT LinuxServiceOpen(_In_ PVOID CallContext, _In_ PVFS_MINOR_DEVICE Device, _In_
     return LxpUtilTranslateStatus(STATUS_SUCCESS);
 }
 
-INT LinuxServiceDelete(_In_ PVOID CallContext, _In_ PVFS_FILE File)
+INT LinuxServiceDelete(_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File)
 {
     UNREFERENCED_PARAMETER(CallContext);
 
     PLINUX_SERVICE_FILE file = (PLINUX_SERVICE_FILE)File;
-    SetChannelEvent(file->Channel, LinuxSide | ChannelClosed);
+    PCHANNEL_CONTEXT context = FindChannelContext(file->Channel);
+    if (context) SetChannelEvent(context, LinuxSide | ChannelClosed);
     file->Channel = NULL;
 
     return LxpUtilTranslateStatus(STATUS_SUCCESS);
 }
 
-INT LinuxServiceMmap(PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID* Unk0, _In_ LARGE_INTEGER Length, _In_ ULONG Protection, _In_ INT Flags, _In_ LARGE_INTEGER Start, _In_ ULONG End)
+INT LinuxServiceMmap(PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File, _Inout_ PVOID* Unk0, _In_ LARGE_INTEGER Length, _In_ VFS_FILE_MMAP_PROTECTION Protection, _In_ VFS_FILE_MMAP_FLAGS Flags, _In_ OFFSET_T Offset, _In_ ULONG End)
 {
     NTSTATUS status;
     PLINUX_SERVICE_FILE file = (PLINUX_SERVICE_FILE)File;
@@ -95,16 +91,16 @@ INT LinuxServiceMmap(PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID* Unk0
         PCHANNEL_CONTEXT context = FindChannelContext(file->Channel);
         if (context)
         {
-            PLX_PICOCONTEXT picoContext;
+            PLX_PROCESS picoContext;
             LARGE_INTEGER size;
             size.QuadPart = (Length.QuadPart + 4095) & 0xFFFFFFFFFFFFF000ui64;
 
             if (!LxpProcessGetCurrent(&picoContext))
             {
-                status = LxpMmAllocateMapVm(CallContext, &picoContext->field_C0, context->SharedSection, File, Unk0, Length, Start, size, Protection, Flags, End);
+                status = LxpMmAllocateMapVm(CallContext, &picoContext->Internal, context->SharedSection, File, Unk0, Length, Offset, size, Protection, Flags, End);
                 if (NT_SUCCESS(status))
                 {
-                    SetChannelEvent(file->Channel, LinuxSide | ChannelOpened);
+                    SetChannelEvent(context, LinuxSide | ChannelOpened);
                 }
             }
             else
@@ -125,7 +121,7 @@ INT LinuxServiceMmap(PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID* Unk0
     return LxpUtilTranslateStatus(status);
 }
 
-INT LinuxServiceIoctl(_In_ PVOID CallContext, _In_ PVFS_FILE File, _In_ ULONG Ioctl, _Inout_ PVOID Buffer)
+INT LinuxServiceIoctl(_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File, _In_ ULONG Ioctl, _Inout_ PVOID Buffer)
 {
     UNREFERENCED_PARAMETER(CallContext);
 
@@ -134,13 +130,13 @@ INT LinuxServiceIoctl(_In_ PVOID CallContext, _In_ PVFS_FILE File, _In_ ULONG Io
 
     switch (Ioctl)
     {
-    case LINUX_SERVICE_FILE_IOCTL::OpenChannel:
+    case LXSSEX_SERVICE_IOCTL::OpenChannel:
         if (file->Channel == NULL)
         {
             __try
             {
-                ProbeForRead(Buffer, sizeof(CHANNEL_REGISTRATION), sizeof(ULONG));
-                ProbeForWrite(Buffer, sizeof(CHANNEL_REGISTRATION), sizeof(ULONG));
+                ProbeForRead(Buffer, sizeof(CHANNEL_REGISTRATION), sizeof(PVOID));
+                ProbeForWrite(Buffer, sizeof(CHANNEL_REGISTRATION), sizeof(PVOID));
                 PCHANNEL_REGISTRATION registration = (PCHANNEL_REGISTRATION)Buffer;
                 PCHANNEL_CONTEXT context = FindChannelContext((PCHANNEL)registration->ChannelHandle);
                 if (context != NULL)
@@ -165,28 +161,10 @@ INT LinuxServiceIoctl(_In_ PVOID CallContext, _In_ PVFS_FILE File, _In_ ULONG Io
         }
         break;
 
-    case LINUX_SERVICE_FILE_IOCTL::SetEvent:
+    case LXSSEX_SERVICE_IOCTL::SetEvent:
         if (file->Channel)
         {
-            __try
-            {
-                ProbeForRead(Buffer, sizeof(CHANNEL_EVENT_TYPE), sizeof(ULONG));
-                PCHANNEL_EVENT_TYPE eventType = (PCHANNEL_EVENT_TYPE)Buffer;
-                switch (*eventType)
-                {
-                case ChannelSync:
-                    SetChannelEvent(file->Channel, LinuxSide | ChannelSync);
-                    status = STATUS_SUCCESS;
-                    break;
-                default:
-                    status = STATUS_INVALID_PARAMETER;
-                    break;
-                }
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                status = GetExceptionCode();
-            }
+            status = IoctlSetEvent(file->Channel, Buffer, LinuxSide);
         }
         else
         {
@@ -194,21 +172,10 @@ INT LinuxServiceIoctl(_In_ PVOID CallContext, _In_ PVFS_FILE File, _In_ ULONG Io
         }
         break;
 
-    case LINUX_SERVICE_FILE_IOCTL::GetEvent:
+    case LXSSEX_SERVICE_IOCTL::GetEvent:
         if (file->Channel)
         {
-            __try
-            {
-                ProbeForWrite(Buffer, sizeof(CHANNEL_EVENT_TYPE), sizeof(ULONG));
-                PCHANNEL_EVENT_TYPE eventType = (PCHANNEL_EVENT_TYPE)Buffer;
-                PCHANNEL_CONTEXT context = FindChannelContext(file->Channel);
-                *eventType = context != NULL ? context->LastEventType : ChannelClosed;
-                status = STATUS_SUCCESS;
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                status = GetExceptionCode();
-            }
+            status = IoctlGetEvent(file->Channel, Buffer);
         }
         else
         {

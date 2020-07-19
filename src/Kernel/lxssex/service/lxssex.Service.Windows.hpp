@@ -2,12 +2,8 @@
 
 #include "lxssex.Service.Shared.hpp"
 
-#define NTDEVICE_SERVICE_NAME L"\\Device\\lxssex\\Service"
-#define SYMBOLIC_SERVICE_NAME L"\\DosDevices\\lxssex\\Service"
-
-#define IOCTL_OPEN_CHANNEL CTL_CODE(FILE_DEVICE_UNKNOWN, 0x0, METHOD_NEITHER, FILE_ANY_ACCESS)
-#define IOCTL_SET_EVENT CTL_CODE(FILE_DEVICE_UNKNOWN, 0x1, METHOD_NEITHER, FILE_ANY_ACCESS)
-#define IOCTL_GET_EVENT CTL_CODE(FILE_DEVICE_UNKNOWN, 0x2, METHOD_NEITHER, FILE_ANY_ACCESS)
+#define NTDEVICE_SERVICE_NAME L"\\Device\\lxssex"
+#define SYMBOLIC_SERVICE_NAME L"\\??\\lxssex"
 
 #define INITGUID
 #include <guiddef.h>
@@ -17,7 +13,7 @@ DEFINE_GUID(LXSSEX_INTERFACE_GUID, 0x7d386d44, 0x3ede, 0x492a, 0xb4, 0x86, 0x13,
 
 typedef struct _WINDOWS_SERVICE_DEVICE
 {
-
+    UNICODE_STRING InterfaceSymbolicLinkName;
 } WINDOWS_SERVICE_DEVICE, * PWINDOWS_SERVICE_DEVICE;
 
 typedef struct _WINDOWS_SERVICE_FILE
@@ -26,6 +22,7 @@ typedef struct _WINDOWS_SERVICE_FILE
 } WINDOWS_SERVICE_FILE, * PWINDOWS_SERVICE_FILE;
 
 NTSTATUS WindowsServiceInitializate(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistyPath);
+NTSTATUS WindowsServiceAddDevice(_In_ PDRIVER_OBJECT DriverObject, _In_ PDEVICE_OBJECT PhysicalDeviceObject);
 DRIVER_UNLOAD WindowsServiceUninitializate;
 DRIVER_DISPATCH WindowsServiceCreate;
 DRIVER_DISPATCH WindowsServiceClose;
