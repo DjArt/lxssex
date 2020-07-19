@@ -1,8 +1,8 @@
 #pragma once
 
-#include <wdm.h>
+#include "lxstatus.h"
 
-typedef INT64 OFF_T, * POFF_T;
+typedef INT64 OFFSET_T, * POFFSET_T;
 
 // Minor Devices in Memory Major Class
 #define KMSG_MINOR          11
@@ -47,7 +47,28 @@ typedef INT64 OFF_T, * POFF_T;
 #define S_IWOTH 00002
 #define S_IXOTH 00001
 
+//Epoll events
+#define EPOLLIN 0x00000001
+#define EPOLLPRI 0x00000002
+#define EPOLLOUT 0x00000004
+#define EPOLLERR 0x00000008
+#define EPOLLHUP 0x00000010
+#define EPOLLNVAL 0x00000020
+#define EPOLLRDNORM 0x00000040
+#define EPOLLRDBAND 0x00000080
+#define EPOLLWRNORM 0x00000100
+#define EPOLLWRBAND 0x00000200
+#define EPOLLMSG 0x00000400
+#define EPOLLRDHUP 0x00002000
+#define EPOLLWAKEUP 0x10000000
+#define EPOLLEXCLUSIVE 0x20000000
+#define EPOLLONESHOT 0x40000000
+#define EPOLLET 0x80000000
+
 // Opaque types
+typedef struct _VFS_INODE VFS_INODE, * PVFS_INODE;
+typedef struct _VFS_CALL_CONTEXT VFS_CALL_CONTEXT, * PVFS_CALL_CONTEXT;
+
 typedef struct _VFS_MINOR_DEVICE
 {
     UINT64 Reserved[6];
@@ -65,7 +86,7 @@ typedef struct _VFS_FILE
 typedef struct _VFS_FILE VFS_FILE, * PVFS_FILE;
 #endif
 
-typedef struct _EPOLL_FILE_STATE
+typedef struct _VFS_FILE_EPOLL_STATE
 {
     UINT64 Unknown0;
     UINT64 Unknown1;
@@ -74,18 +95,61 @@ typedef struct _EPOLL_FILE_STATE
     UINT64 Unknown4;
     UINT64 Unknown5;
     UINT64 Unknown6;
-} EPOLL_FILE_STATE, * PEPOLL_FILE_STATE;
+} VFS_FILE_EPOLL_STATE, * PVFS_FILE_EPOLL_STATE;
 
-typedef struct _VFS_MMAP_FILE_CONTEXT
+typedef struct _VFS_FILE_MMAP_CONTEXT
 {
     EX_PUSH_LOCK PushLock;
-    PVOID MMapContext;
-} VFS_MMAP_FILE_CONTEXT, * PVFS_MMAP_FILE_CONTEXT;
+    PVOID MmapContext;
+} VFS_FILE_MMAP_CONTEXT, * PVFS_FILE_MMAP_CONTEXT;
 
-typedef struct _VFS_INODE VFS_INODE, * PVFS_INODE;
+#ifdef __cplusplus
+typedef enum _VFS_FILE_EPOLL_STATE_FLAGS : UINT64
+{
+    In = EPOLLIN,
+    PRI = EPOLLPRI,
+    Out = EPOLLOUT,
+    Error = EPOLLERR,
+    HangUp = EPOLLHUP,
+    NoValue = EPOLLNVAL,
+    RDNORM = EPOLLRDNORM,
+    RDBAND = EPOLLRDBAND,
+    WRNORM = EPOLLWRNORM,
+    WRBAND = EPOLLWRBAND,
+    Message = EPOLLMSG,
+    RDHUP = EPOLLRDHUP,
+    Exclusive = EPOLLEXCLUSIVE,
+    OneShot = EPOLLONESHOT,
+    EdgeTriggered = EPOLLET
+} VFS_FILE_EPOLL_STATE_FLAGS, * PVFS_FILE_EPOLL_STATE_FLAGS;
+#else
+typedef UINT64 VFS_FILE_EPOLL_STATE_FLAGS, * PVFS_FILE_EPOLL_STATE_FLAGS;
+#endif
+
+typedef enum _VFS_FILE_MMAP_FLAGS
+{
+
+} VFS_FILE_MMAP_FLAGS, * PVFS_FILE_MMAP_FLAGS;
+
+typedef enum _VFS_FILE_MMAP_PROTECTION
+{
+    
+} VFS_FILE_MMAP_PROTECTION, * PVFS_FILE_MMAP_PROTECTION;
+
+typedef struct _VFS_FILE_IO_VECTOR_BUFFER
+{
+    PVOID Buffer;
+    SIZE_T Length;
+} VFS_FILE_IO_VECTOR_BUFFER, * PVFS_FILE_IO_VECTOR_BUFFER;
+
+typedef struct _VFS_FILE_IO_VECTOR
+{
+    INT Count;
+    PVFS_FILE_IO_VECTOR_BUFFER Data;
+} VFS_FILE_IO_VECTOR, * PVFS_FILE_IO_VECTOR;
 
 // VFS Minor Device Callbacks
-typedef INT(VFS_MINOR_DEVICE_OPEN_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_MINOR_DEVICE MinorDevice, _In_ ULONG OpenFlags, _Out_ PVFS_FILE* File);
+typedef LXSTATUS(VFS_MINOR_DEVICE_OPEN_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_MINOR_DEVICE Device, _In_ ULONG OpenFlags, _Out_ PVFS_FILE* File);
 typedef VFS_MINOR_DEVICE_OPEN_CALLBACK* PVFS_MINOR_DEVICE_OPEN_CALLBACK;
 typedef VOID(VFS_MINOR_DEVICE_UNINITIALIZE_CALLBACK) (_In_ PVFS_MINOR_DEVICE MinorDevice);
 typedef VFS_MINOR_DEVICE_UNINITIALIZE_CALLBACK* PVFS_MINOR_DEVICE_UNINITIALIZE_CALLBACK;
@@ -98,27 +162,27 @@ typedef struct _VFS_MINOR_DEVICE_CALLBACKS
 } VFS_MINOR_DEVICE_CALLBACKS, * PVFS_MINOR_DEVICE_CALLBACKS;
 
 // VFS File Callbacks
-typedef INT(VFS_FILE_DELETE_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File);
-typedef INT(VFS_FILE_FLUSH_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File);
-typedef INT(VFS_FILE_IOCTL_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _In_ ULONG Ioctl, _Inout_ PVOID Buffer);
-typedef INT(VFS_FILE_READ_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID Buffer, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
-typedef INT(VFS_FILE_READ_VECTOR_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID IoVector, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
-typedef INT(VFS_FILE_RELEASE_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File);
-typedef INT(VFS_FILE_SEEK_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _In_ OFF_T POffset, _In_ INT Whence, _Out_ POFF_T PResultOffset);
-typedef INT(VFS_FILE_WRITE_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID Buffer, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
-typedef INT(VFS_FILE_WRITE_VECTOR_CALLBACK) (_In_ PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID IoVector, _In_ SIZE_T Length, _In_ POFF_T POffset, _Out_ PSIZE_T PBytesTransferred);
-typedef INT(VFS_FILE_MMAP_CALLBACK) (PVOID CallContext, _In_ PVFS_FILE File, _Inout_ PVOID* Unk0, LARGE_INTEGER Length, ULONG Protection, INT Flags, LARGE_INTEGER Start, ULONG End);
+typedef LXSTATUS(VFS_FILE_DELETE_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File);
+typedef LXSTATUS(VFS_FILE_FLUSH_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File);
+typedef LXSTATUS(VFS_FILE_IOCTL_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File, _In_ ULONG Ioctl, _Inout_ PVOID Buffer);
+typedef LXSTATUS(VFS_FILE_MMAP_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File, _Inout_ PVOID* BaseAddress, LARGE_INTEGER Length, VFS_FILE_MMAP_PROTECTION Protection, VFS_FILE_MMAP_FLAGS Flags, OFFSET_T Offset, ULONG End);
+typedef LXSTATUS(VFS_FILE_READ_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File, _Inout_ PVOID Buffer, _In_ SIZE_T Length, _In_ POFFSET_T Offset, _Out_ PSIZE_T BytesTransferred);
+typedef LXSTATUS(VFS_FILE_READ_VECTOR_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File, _Inout_ PVFS_FILE_IO_VECTOR IoVector, _In_ SIZE_T Length, _In_ POFFSET_T Offset, _Out_ PSIZE_T BytesTransferred);
+typedef LXSTATUS(VFS_FILE_RELEASE_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File);
+typedef LXSTATUS(VFS_FILE_SEEK_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File, _In_ OFFSET_T Offset, _In_ INT Whence, _Out_ POFFSET_T ResultOffset);
+typedef LXSTATUS(VFS_FILE_WRITE_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File, _Inout_ PVOID Buffer, _In_ SIZE_T Length, _In_ POFFSET_T Offset, _Out_ PSIZE_T BytesTransferred);
+typedef LXSTATUS(VFS_FILE_WRITE_VECTOR_CALLBACK) (_In_ PVFS_CALL_CONTEXT CallContext, _In_ PVFS_FILE File, _Inout_ PVFS_FILE_IO_VECTOR IoVector, _In_ SIZE_T Length, _In_ POFFSET_T Offset, _Out_ PSIZE_T BytesTransferred);
 
 typedef VFS_FILE_DELETE_CALLBACK* PVFS_FILE_DELETE_CALLBACK;
 typedef VFS_FILE_FLUSH_CALLBACK* PVFS_FILE_FLUSH_CALLBACK;
 typedef VFS_FILE_IOCTL_CALLBACK* PVFS_FILE_IOCTL_CALLBACK;
+typedef VFS_FILE_MMAP_CALLBACK* PVFS_FILE_MMAP_CALLBACK;
 typedef VFS_FILE_READ_CALLBACK* PVFS_FILE_READ_CALLBACK;
 typedef VFS_FILE_READ_VECTOR_CALLBACK* PVFS_FILE_READ_VECTOR_CALLBACK;
 typedef VFS_FILE_RELEASE_CALLBACK* PVFS_FILE_RELEASE_CALLBACK;
 typedef VFS_FILE_SEEK_CALLBACK* PVFS_FILE_SEEK_CALLBACK;
 typedef VFS_FILE_WRITE_CALLBACK* PVFS_FILE_WRITE_CALLBACK;
 typedef VFS_FILE_WRITE_VECTOR_CALLBACK* PVFS_FILE_WRITE_VECTOR_CALLBACK;
-typedef VFS_FILE_MMAP_CALLBACK* PVFS_FILE_MMAP_CALLBACK;
 
 typedef struct _VFS_FILE_CALLBACKS
 {
@@ -152,7 +216,7 @@ typedef enum _VFS_ENTRY_TYPE
     VfsNodeEntry,       // VfsMakeNode
     VfsSymlinkEntry,    // VfsMakeSymbolicLink
     VfsFileEntry        // VfsOpenFile
-} VFS_ENTRY_TYPE;
+} VFS_ENTRY_TYPE, *PVFS_ENTRY_TYPE;
 
 typedef struct _VFS_ENTRY
 {

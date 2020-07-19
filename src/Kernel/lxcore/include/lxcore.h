@@ -155,7 +155,7 @@ typedef struct _LX_INSTANCE
 } LX_INSTANCE, *PLX_INSTANCE;
 
 // Namespace Initialization Callback and Registration
-typedef INT(VFS_MOUNT_NAMESPACE_INITIALIZE_CALLBACK) (_In_ PLX_INSTANCE Instance);
+typedef NTSTATUS VFS_MOUNT_NAMESPACE_INITIALIZE_CALLBACK(_In_ PLX_INSTANCE Instance);
 typedef VFS_MOUNT_NAMESPACE_INITIALIZE_CALLBACK* PVFS_MOUNT_NAMESPACE_INITIALIZE_CALLBACK;
 typedef struct _LXP_SUBSYSTEM_INFORMATION
 {
@@ -166,7 +166,7 @@ EXTERN_C_START
 
 // LxCore Initialization APIs
 __I_DLLSPEC(NTSTATUS NTAPI LxInitialize(_In_ PDRIVER_OBJECT DriverObject, _In_ PLXP_SUBSYSTEM_INFORMATION SubsystemInformation));
-__I_DLLSPEC(INT NTAPI VfsInitializeStartupEntries(_In_ PLX_INSTANCE Instance, _In_ PVFS_ENTRY Entries, _In_ ULONG EntryCount));
+__I_DLLSPEC(LXSTATUS NTAPI VfsInitializeStartupEntries(_In_ PLX_INSTANCE Instance, _In_ PVFS_ENTRY Entries, _In_ ULONG EntryCount));
 
 // LxCore VFS Minor Device APIs
 __I_DLLSPEC(PVFS_MINOR_DEVICE NTAPI VfsDeviceMinorAllocate(_In_ PVFS_MINOR_DEVICE_CALLBACKS MinorDeviceCallbacks, _In_ ULONG MinorDeviceContextSize));
@@ -175,25 +175,29 @@ __I_DLLSPEC(BOOLEAN NTAPI LxpDevMiscRegister(_In_ PLX_INSTANCE Instance, _In_ PV
 
 // LxCore VFS File APIs
 __I_DLLSPEC(PVFS_FILE NTAPI VfsFileAllocate(_In_ ULONG FileSize, _In_ PVFS_FILE_CALLBACKS FileCallbacks));
-__I_DLLSPEC(VOID NTAPI VfsFileSetEpollState(_In_ PVFS_FILE File, _In_ PEPOLL_FILE_STATE State));
-__I_DLLSPEC(VOID NTAPI VfsFileSetMmFileContext(_In_ PVFS_FILE File, _In_ PVFS_MMAP_FILE_CONTEXT MmapFileContext));
+__I_DLLSPEC(VOID NTAPI VfsFileSetEpollState(_In_ PVFS_FILE File, _In_ PVFS_FILE_EPOLL_STATE EpollState));
+__I_DLLSPEC(VOID NTAPI VfsFileSetMmFileContext(_In_ PVFS_FILE File, _In_ PVFS_FILE_MMAP_CONTEXT MmapContext));
 
-// LXCore Epoll APIs
-__I_DLLSPEC(PVOID NTAPI LxpEpollFileStateInitialize(_In_ PEPOLL_FILE_STATE FileState, _In_ UINT64 Flags));
-__I_DLLSPEC(PVOID NTAPI LxpEpollFileStateUpdate(_In_ PEPOLL_FILE_STATE FileState, _In_ UINT64 Flags));
+// LxCore Epoll APIs
+__I_DLLSPEC(PVOID NTAPI LxpEpollFileStateCleanup(_In_ PVFS_FILE_EPOLL_STATE EpollState));
+__I_DLLSPEC(PVOID NTAPI LxpEpollFileStateInitialize(_In_ PVFS_FILE_EPOLL_STATE EpollState, _In_ VFS_FILE_EPOLL_STATE_FLAGS Flags));
+__I_DLLSPEC(PVOID NTAPI LxpEpollFileStateUpdate(_In_ PVFS_FILE_EPOLL_STATE EpollState, _In_ VFS_FILE_EPOLL_STATE_FLAGS Flags));
+
+// LxCore Mmap APIs
+__I_DLLSPEC(NTSTATUS NTAPI LxpMmAllocateMapVm(_In_ PVFS_CALL_CONTEXT CallContext, _In_ PLX_PROCESS_INTERNAL ProcessInternal, _In_ HANDLE SectionHandle, _In_ PVFS_FILE File, _Out_ PVOID* BaseAddress, _In_ LARGE_INTEGER Length, _In_ OFFSET_T Offset, _In_ LARGE_INTEGER RegionSize, _In_ VFS_FILE_MMAP_PROTECTION Protection, _In_ VFS_FILE_MMAP_FLAGS Flags, _In_ ULONG End));
+__I_DLLSPEC(PVOID NTAPI LxpMmFileContextCleanup(_In_ PVFS_FILE_MMAP_CONTEXT MmapContext));
+__I_DLLSPEC(PVOID NTAPI LxpMmFileContextInitialize(_In_ PVFS_FILE_MMAP_CONTEXT MmapContext));
+
+// LxCore Process APIs
+__I_DLLSPEC(BOOLEAN NTAPI LxpProcessGetCurrent(PLX_PROCESS* Process));
 
 // LxCore Utility APIs
-__I_DLLSPEC(INT NTAPI LxpUtilTranslateStatus(_In_ NTSTATUS Status));
 __I_DLLSPEC(NTSTATUS NTAPI LxpUtilCreateSection(PHANDLE SectionHandle, PLARGE_INTEGER MaximumSize, HANDLE FileHandle, INT64 a3));
-__I_DLLSPEC(NTSTATUS NTAPI LxpUtilNameGeneratorNew(volatile UINT64 *a1, PUNICODE_STRING a2, const PUNICODE_STRING a3));
-__I_DLLSPEC(NTSTATUS NTAPI LxpUtilCreateTemporarySparseFile(PUNICODE_STRING FileName, HANDLE DirectoryHandle, PFILE_ALLOCATION_INFORMATION FileInformation, PHANDLE FileHandle));
 __I_DLLSPEC(NTSTATUS NTAPI LxpUtilCreateTemporaryDirectory(HANDLE DirectoryHandle, volatile UINT64* idk, PUNICODE_STRING Name, PHANDLE FileHandle));
+__I_DLLSPEC(NTSTATUS NTAPI LxpUtilCreateTemporarySparseFile(PUNICODE_STRING FileName, HANDLE DirectoryHandle, PFILE_ALLOCATION_INFORMATION FileInformation, PHANDLE FileHandle));
+__I_DLLSPEC(NTSTATUS NTAPI LxpUtilNameGeneratorNew(volatile UINT64 *a1, PUNICODE_STRING a2, const PUNICODE_STRING a3));
 
-
-//LxCore Memory API
-__I_DLLSPEC(INT NTAPI LxpMmAllocateMapVm(PVOID CallContext, PLX_PICOCONTEXT_MEMORY a1, HANDLE SectionHandle, PVFS_FILE File, PVOID a4, LARGE_INTEGER Length, LARGE_INTEGER Start, LARGE_INTEGER SectionMaximumSize, ULONG Protection, INT Flags, ULONG End));
-
-__I_DLLSPEC(BOOLEAN NTAPI LxpProcessGetCurrent(PLX_PICOCONTEXT* context));
+__I_DLLSPEC(LXSTATUS NTAPI LxpUtilTranslateStatus(_In_ NTSTATUS Status));
 
 EXTERN_C_END
 

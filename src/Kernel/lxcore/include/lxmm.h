@@ -2,14 +2,14 @@
 
 #include <wdm.h>
 
-typedef struct _LX_PICOCONTEXT_MEMORY
+typedef struct _LX_PROCESS_INTERNAL
 {
     SIZE_T field_0;
     char field_8;
     INT8 gap_9[7];
     INT64 field_10;
     EX_PUSH_LOCK PushLock;
-    struct _KTHREAD* field_20;
+    PKTHREAD field_20;
     INT8 gap_28[16];
     HANDLE ProcessHandle;
     __int64 field_40;
@@ -20,9 +20,9 @@ typedef struct _LX_PICOCONTEXT_MEMORY
     __int64 field_70;
     __int64 field_78;
     INT64 field_80;
-} LX_PICOCONTEXT_MEMORY, *PLX_PICOCONTEXT_MEMORY;
+} LX_PROCESS_INTERNAL, *PLX_PROCESS_INTERNAL;
 
-typedef struct _LX_PICOCONTEXT
+typedef struct _LX_PROCESS
 {
     PVOID field_0;
     INT8 gap_8[40];
@@ -33,5 +33,5 @@ typedef struct _LX_PICOCONTEXT
     INT8 gap_49[15];
     void* field_58;
     INT8 gap_60[96];
-    LX_PICOCONTEXT_MEMORY field_C0;
-} LX_PICOCONTEXT, * PLX_PICOCONTEXT;
+    LX_PROCESS_INTERNAL Internal;
+} LX_PROCESS, * PLX_PROCESS;
