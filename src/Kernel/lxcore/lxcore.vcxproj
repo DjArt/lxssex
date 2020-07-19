@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="include\lxcore.h" />
     <ClInclude Include="include\lxmm.h" />
+    <ClInclude Include="include\lxstatus.h" />
     <ClInclude Include="include\vfs.h" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +107,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Lib>
       <ModuleDefinitionFile>lxcore.def</ModuleDefinitionFile>
@@ -116,6 +118,9 @@
       </IgnoreAllDefaultLibraries>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

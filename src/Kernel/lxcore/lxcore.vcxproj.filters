@@ -24,6 +24,9 @@
     <ClInclude Include="include\vfs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\lxstatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lxcore.def">
