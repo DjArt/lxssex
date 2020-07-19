@@ -4,42 +4,12 @@
 
 [Version]
 Signature   = "$WINDOWS NT$"
-Class       = System
-ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318}
+Class       = %ClassName%
+ClassGuid   = {C57752F7-E059-45CB-A4EA-B7BD5AF5ADD6}
 Provider    = %ManufacturerName%
 DriverVer   =
 CatalogFile = lxssex.cat
 PnpLockdown = 1
-
-; ================= NTAMD64 Section =====================
-
-[DefaultInstall.NTAMD64]
-CopyFiles   = lxssex.NT.Files
-OptionDesc  = %ServiceDescription%
-CopyINF     = %DriverName%.inf
-
-[DefaultInstall.NTAMD64.Services]
-AddService  = %ServiceName%,0x802,lxssex.Service
-
-[DefaultInstall.NTAMD64.Interfaces]
-AddInterface = "{%LXSSEX_INTERFACE_GUID%}", , lxssex.Interface
-
-[DefaultUninstall.NTAMD64]
-LegacyUninstall = 1
-DelFiles        = lxssex.NT.Files
-
-[DefaultUninstall.NTAMD64.Services]
-DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
-
-; ================= Service Section =====================
-
-[lxssex.Service]
-DisplayName      = %ServiceName%
-Description      = %ServiceDescription%
-ServiceBinary    = %12%\%DriverName%.sys    ;%windir%\system32\drivers\
-ServiceType      = 1
-StartType        = 1                        ;SERVICE_SYSTEM_START
-ErrorControl     = 1
 
 ; ================= Files Section =====================
 
@@ -55,6 +25,15 @@ DefaultDestDir = 12
 [SourceDisksFiles]
 lxssex.sys = 1,,
 
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=lxssex.ClassReg
+
+[lxssex.ClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
 ; ================= Interface Section =====================
 
 [lxssex.Interface]
@@ -62,6 +41,35 @@ AddProperty = lxssex.Interface.AddProps
 
 [lxssex.Interface.AddProps]
 {%DEVPKEY_DeviceInterface_UnrestrictedAppCapabilities%}, 8, 0x2012,, %CustomCapability%
+
+; ================= Install Section =====================
+
+[Manufacturer]
+%ManufacturerName%=lxssex,NT$ARCH$
+
+[lxssex.NT$ARCH$]
+%DeviceName%=lxssex.Device, Root\lxssex
+
+[lxssex.Device.NT]
+CopyFiles   = lxssex.NT.Files
+OptionDesc  = %ServiceDescription%
+CopyINF     = %DriverName%.inf
+
+[lxssex.Device.NT.Services]
+AddService  = %ServiceName%,0x802,lxssex.Device.Service
+
+[lxssex.Device.NT.Interfaces]
+AddInterface = "{%LXSSEX_INTERFACE_GUID%}", , lxssex.Interface
+
+; ================= Service Section =====================
+
+[lxssex.Device.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %12%\%DriverName%.sys    ;%windir%\system32\drivers\
+ServiceType      = 1
+StartType        = 1                        ;SERVICE_SYSTEM_START
+ErrorControl     = 1
 
 ; ================= Strings Section =====================
 
@@ -71,7 +79,7 @@ ServiceName = "lxssex"
 DeviceName = "lxssex"
 DriverName = "lxssex"
 ManufacturerName = "djart"
-ClassName = "lxssex"
+ClassName = "LXSS Extensions"
 DiskName = "lxssex Source Disk"
 LXSSEX_INTERFACE_GUID = "7D386D44-3EDE-492A-B486-1330596DECA3"
 DEVPKEY_DeviceInterface_UnrestrictedAppCapabilities = "026e516e-b814-414b-83cd-856d6fef4822"
