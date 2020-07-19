@@ -1,17 +1,9 @@
 #pragma once
 
-#ifdef WINNT
-#include <ntdef.h>
-#else
-#include <stdint.h>
-#define UINT32 uint32_t
-#define UINT64 uint64_t
-#endif
-
 typedef struct _CHANNEL
 {
-	UINT32 Id;
-	UINT64 SectionSize;
+	unsigned __int32 Id;
+	unsigned __int64 SectionSize;
 } CHANNEL, * PCHANNEL;
 
 typedef struct _CHANNEL_REGISTRATION
@@ -25,13 +17,17 @@ typedef struct _CHANNEL_REGISTRATION
 
 typedef enum _CHANNEL_EVENT_TYPE
 {
-	ChannelSync = 0b00000000,
-	WindowsSide = 0b00000001,
-	LinuxSide = 0b00000010,
-	ChannelOpened = 0b00000100,
-	ChannelClosed = 0b00001000,
+	Unknown			= 0b00000000,
+	WindowsSide		= 0b00000001,
+	LinuxSide		= 0b00000010,
+	ChannelSync		= 0b00000100,
+	ChannelOpened	= 0b00001000,
+	ChannelClosed	= 0b00010000,
 } CHANNEL_EVENT_TYPE, * PCHANNEL_EVENT_TYPE;
 
-#ifdef WINNT
-DEFINE_ENUM_FLAG_OPERATORS(CHANNEL_EVENT_TYPE)
-#endif
+enum LXSSEX_SERVICE_IOCTL
+{
+	OpenChannel = 0x0,
+	SetEvent = 0x1,
+	GetEvent = 0x2,
+};
