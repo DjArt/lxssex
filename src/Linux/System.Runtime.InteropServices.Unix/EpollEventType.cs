@@ -9,6 +9,7 @@
         Out = 0x00000004,
         Error = 0x00000008,
         HangUp = 0x00000010,
+        NoValue = 0x00000020,
         RDNORM = 0x00000040,
         RDBAND = 0x00000080,
         WRNORM = 0x00000100,
