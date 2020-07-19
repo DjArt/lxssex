@@ -13,16 +13,15 @@ PnpLockDown=1
 
 [DestinationDirs]
 DefaultDestDir = 12
-lxssex.WM_Device_CoInstaller_CopyFiles = 11
 
 ; ================= Class section =====================
 
 [ClassInstall32]
-Addreg=SampleClassReg
+Addreg=lxssexClassReg
 
-[SampleClassReg]
+[lxssexClassReg]
 HKR,,,0,%ClassName%
-HKR,,Icon,,-5
+HKR,,IconPath,,%11%\pifmgr.dll,-22
 
 [SourceDisksNames]
 1 = %DiskName%,,,""
