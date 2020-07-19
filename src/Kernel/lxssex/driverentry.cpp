@@ -1,17 +1,23 @@
 #include "vfsplugin.hpp"
 #include "service/lxssex.Service.Linux.hpp"
-#include "service/lxssex.Service.Shared.hpp"
 #include "service/lxssex.Service.Windows.hpp"
 
-INT InitializationRoutine(_In_ PLX_INSTANCE Instance)
+NTSTATUS InitializationRoutine(_In_ PLX_INSTANCE Instance)
 {
     LinuxServiceInitialize(Instance);
     return LoadPlugins(Instance);
 }
 
+VOID DriverUnload(_In_ PDRIVER_OBJECT DeviceObject)
+{
+    WindowsServiceUninitializate(DeviceObject);
+}
+
 EXTERN_C NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath)
 {
     NTSTATUS status;
+
+    InitializationRoutine();
 
     LXP_SUBSYSTEM_INFORMATION subsystemInformation
     {
@@ -20,13 +26,15 @@ EXTERN_C NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_ST
     status = LxInitialize(DriverObject, &subsystemInformation);
     if (status == STATUS_TOO_LATE) status = STATUS_SUCCESS;
 
-    status = WindowsServiceInitializate(DriverObject, RegistryPath);
-    DriverObject->DriverUnload = (PDRIVER_UNLOAD)&WindowsServiceInitializate;
-    DriverObject->MajorFunction[IRP_MJ_CLEANUP] = (PDRIVER_DISPATCH)&WindowsServiceCleanup;
-    DriverObject->MajorFunction[IRP_MJ_CLOSE] = (PDRIVER_DISPATCH)&WindowsServiceClose;
-    DriverObject->MajorFunction[IRP_MJ_CREATE] = (PDRIVER_DISPATCH)&WindowsServiceCreate;
-    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = (PDRIVER_DISPATCH)&WindowsServiceIOControl;
-    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = (PDRIVER_DISPATCH)&WindowsServiceIOControl;
+    InitializeVfsPluginSystem();
 
-    return STATUS_SUCCESS;
+    status = WindowsServiceInitializate(DriverObject, RegistryPath);
+    DriverObject->DriverUnload = DriverUnload;
+    DriverObject->MajorFunction[IRP_MJ_CLEANUP] = WindowsServiceCleanup;
+    DriverObject->MajorFunction[IRP_MJ_CLOSE] = WindowsServiceClose;
+    DriverObject->MajorFunction[IRP_MJ_CREATE] = WindowsServiceCreate;
+    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = WindowsServiceIOControl;
+
+
+    return status;
 }
