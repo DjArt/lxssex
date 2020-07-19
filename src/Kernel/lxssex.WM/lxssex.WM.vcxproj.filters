@@ -17,17 +17,26 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
-    <Filter Include="Source Files\linux">
-      <UniqueIdentifier>{ab933ee0-58e1-4f7d-b7c1-7ac75418f160}</UniqueIdentifier>
+    <Filter Include="Header Files\include">
+      <UniqueIdentifier>{f33155db-8d54-4f39-b68b-5857cda3e6d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\windows">
-      <UniqueIdentifier>{e98509cc-70cd-4c7b-9a5d-df13efdff33a}</UniqueIdentifier>
+    <Filter Include="Header Files\wm">
+      <UniqueIdentifier>{2c74507e-4819-4bde-a194-414a83dddcd0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\linux">
-      <UniqueIdentifier>{0becaaa0-a285-4164-8839-099c5d942c36}</UniqueIdentifier>
+    <Filter Include="Source Files\wm">
+      <UniqueIdentifier>{173ef0bb-3d98-456b-baca-b55ff5f77b83}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\windows">
-      <UniqueIdentifier>{370040ab-4435-430b-86e2-94b9d5569400}</UniqueIdentifier>
+    <Filter Include="Header Files\include\km">
+      <UniqueIdentifier>{b1001ad2-d4a6-4d6f-a942-7a17e55f73a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\um">
+      <UniqueIdentifier>{a89187a9-5f46-49c7-88b5-37e73f3b84b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\km\wm">
+      <UniqueIdentifier>{767583f5-c42e-4366-b315-039f47c68e50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\um\wm">
+      <UniqueIdentifier>{6171c27d-7690-4030-b302-94c48eaa15df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,28 +45,42 @@
     </Inf>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="linux\lxssex.WM.cpp">
-      <Filter>Source Files\linux</Filter>
+    <ClCompile Include="wm\lxssex.WindowManager.Linux.cpp">
+      <Filter>Source Files\wm</Filter>
     </ClCompile>
-    <ClCompile Include="linux\lxssex.WM.VFSEntry.c">
-      <Filter>Source Files\linux</Filter>
+    <ClCompile Include="wm\lxssex.WindowManager.Windows.cpp">
+      <Filter>Source Files\wm</Filter>
     </ClCompile>
-    <ClCompile Include="DriverEntry.cpp">
+    <ClCompile Include="driverentry.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wm\lxssex.WindowManager.Shared.cpp">
+      <Filter>Source Files\wm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="linux\lxssex.WM.hpp">
-      <Filter>Header Files\linux</Filter>
+    <ClInclude Include="wm\lxssex.WindowManager.Shared.hpp">
+      <Filter>Header Files\wm</Filter>
     </ClInclude>
-    <ClInclude Include="AVLTree.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="wm\lxssex.WindowManager.Linux.hpp">
+      <Filter>Header Files\wm</Filter>
     </ClInclude>
-    <ClInclude Include="SharedMemoryController.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="wm\lxssex.WindowManager.Windows.hpp">
+      <Filter>Header Files\wm</Filter>
     </ClInclude>
-    <ClInclude Include="DriverEntry.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\km\wm\lxssex.WindowManager.h">
+      <Filter>Header Files\include\km\wm</Filter>
     </ClInclude>
+    <ClInclude Include="include\um\wm\lxssex.WindowManager.Shared.h">
+      <Filter>Header Files\include\um\wm</Filter>
+    </ClInclude>
+    <ClInclude Include="include\um\wm\lxssex.WindowManager.Windows.h">
+      <Filter>Header Files\include\um\wm</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lxssex.WMAccessCapability.sccd">
+      <Filter>Driver Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
