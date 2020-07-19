@@ -8,40 +8,45 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Unix;
 using System.Threading;
 
-using EGLDisplay = System.IntPtr;
-using EGLSurface = System.IntPtr;
-using EGLContext = System.IntPtr;
-using EGLNativePixmapType = System.IntPtr;
-using EGLNativeWindowType = System.IntPtr;
-using EGLNativeDisplayType = System.IntPtr;
-using EGLConfig = System.IntPtr;
-using EGLTime = System.IntPtr;
-using EGLSync = System.IntPtr;
-using EGLClientBuffer = System.IntPtr;
-using EGLImage = System.IntPtr;
-using EGLSyncKHR = System.IntPtr;
-using EGLImageKHR = System.IntPtr;
-using EGLDeviceEXT = System.IntPtr;
-using EGLObjectKHR = System.IntPtr;
-using EGLSetBlobFuncANDROID = System.IntPtr;
-using EGLGetBlobFuncANDROID = System.IntPtr;
-using AHardwareBuffer = System.IntPtr;
-using EGLFrameTokenANGLE = System.IntPtr;
-using EGLnsecsANDROID = System.IntPtr;
-using EGLLabelKHR = System.IntPtr;
-using EGLStreamKHR = System.IntPtr;
-using EGLDEBUGPROCKHR = System.IntPtr;
+//using EGLSyncKHR = System.IntPtr;
+//using EGLImageKHR = System.IntPtr;
+//using EGLDeviceEXT = System.IntPtr;
+//using EGLObjectKHR = System.IntPtr;
+//using EGLSetBlobFuncANDROID = System.IntPtr;
+//using EGLGetBlobFuncANDROID = System.IntPtr;
+//using AHardwareBuffer = System.IntPtr;
+//using EGLFrameTokenANGLE = System.IntPtr;
+//using EGLnsecsANDROID = System.IntPtr;
+//using EGLLabelKHR = System.IntPtr;
+//using EGLStreamKHR = System.IntPtr;
+//using EGLDEBUGPROCKHR = System.IntPtr;
 
 namespace EGL
 {
     public static class Exports
     {
-        private static MessageHandler RPC { get; }
+        private static Channel RPC { get; }
+        private static SafeUnixHandle lxssex { get; }
 
         static Exports()
         {
-            SafeMemoryMappedViewUnixHandle buf = LibC.MMap(IntPtr.Zero, 1024, MappingProtection.Read | MappingProtection.Write, MappingFlags.Shared | MappingFlags.Anonymous, null, 0);
-            RPC = new MessageHandler(typeof(Exports), buf, new AutoResetEvent(false));
+            lxssex = LibC.Open("/dev/lxssex", 0, 0);
+            EpollWaitHandle lxssexEvent = new EpollWaitHandle();
+            lxssexEvent.AddTracking(lxssex, EpollEventType.In | EpollEventType.Out);
+            SafeMemoryMappedViewUnixHandle buf = LibC.MMap(IntPtr.Zero, 1024, MappingProtection.Read | MappingProtection.Write, MappingFlags.Shared, lxssex, 0);
+            RPC = new Channel(typeof(Exports), buf, lxssexEvent, GetEvent, SetEvent);
+        }
+
+        private static ChannelEventType GetEvent()
+        {
+            ChannelEventType result = ChannelEventType.ChannelSync;
+            LibC.Ioctl(lxssex, 1, ref result);
+            return result;
+        }
+
+        private static void SetEvent(ChannelEventType eventType)
+        {
+            LibC.Ioctl(lxssex, 2, ref eventType);
         }
 
         private static void EnsureEGLLoaded() { }
@@ -299,7 +304,7 @@ namespace EGL
         }
 
         [UnmanagedCallersOnly(EntryPoint = nameof(eglClientWaitSync))]
-        public static WaitSyncResult eglClientWaitSync(EGLDisplay display, EGLSync sync, WaitSyncFlags flags, EGLTime timeout)
+        public static WaitSyncResult eglClientWaitSync(EGLDisplay display, EGLSync sync, WaitSyncFlags flags, ulong nanosecondsTimeout)
         {
             EnsureEGLLoaded();
             return default;
